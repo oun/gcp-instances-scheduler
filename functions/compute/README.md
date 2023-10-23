@@ -102,7 +102,7 @@ gcloud pubsub topics publish stop-instance-event \
 Check function logs to see the result:
 
 ```
-gcloud functions logs read sample-instance-scheduler \
+gcloud functions logs read \
   --gen2 \
   --region=asia-southeast1 \
   --limit=5 \
@@ -142,6 +142,7 @@ All instances in the my-project-id project and asia-southeast1-a, us-west1-b zon
 ```
 
 All instances with label owner=james in the my-project-id project and us-west1-b zone:
+
 ```
 {
   "project": "my-project-id",
