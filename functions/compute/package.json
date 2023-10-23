@@ -1,0 +1,16 @@
+{
+  "name": "instances-start-stop-function",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx functions-framework --target=startInstances --signature-type=cloudevent",
+    "stop": "npx functions-framework --target=stopInstances --signature-type=cloudevent"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/compute": "^4.0.1",
+    "@google-cloud/functions-framework": "^3.3.0"
+  }
+}
