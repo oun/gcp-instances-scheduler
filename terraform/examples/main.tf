@@ -2,8 +2,8 @@ locals {
   message = "{\"project\": \"${var.scheduled_project_id}\"}"
 }
 
-resource "google_service_account" "compute_function" {
-  account_id   = "start-stop-compute-function"
+resource "google_service_account" "gce_function" {
+  account_id   = "start-stop-gce-function"
   project      = var.project_id
   display_name = "Cloud Function Service Account"
 }
@@ -20,10 +20,10 @@ resource "google_service_account" "gke_function" {
   display_name = "Cloud Function Service Account"
 }
 
-resource "google_project_iam_member" "compute_function" {
+resource "google_project_iam_member" "gce_function" {
   project = var.scheduled_project_id
   role    = "roles/compute.instanceAdmin.v1"
-  member  = google_service_account.compute_function.member
+  member  = google_service_account.gce_function.member
 }
 
 resource "google_project_iam_member" "sql_function" {
@@ -52,11 +52,11 @@ module "start_stop_scheduler" {
 
   start_compute_function = {
     enabled               = true
-    service_account_email = google_service_account.compute_function.email
+    service_account_email = google_service_account.gce_function.email
   }
   stop_compute_function = {
     enabled               = true
-    service_account_email = google_service_account.compute_function.email
+    service_account_email = google_service_account.gce_function.email
   }
   start_sql_function = {
     enabled               = true
