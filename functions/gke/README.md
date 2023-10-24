@@ -1,6 +1,6 @@
-# Cloud SQL Instances Start Stop Clound Functions
+# Kubernetes Engine Node Pool Start Stop Clound Functions
 
-GCP Cloud functions to start and stop Cloud SQL instances.
+GCP Cloud functions to start and stop Kubernetes Engine node pool.
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ npm run stop
 
 ## Test Function Locally
 
-Stop all instances in my-project-id project:
+Resize all cluster node pools in my-project-id:
 
 ```
 data=$(echo '{"project": "my-project-id"}' | base64)
@@ -66,7 +66,7 @@ gcloud pubsub topics create stop-instance-event
 Deploy cloud functions
 
 ```
-gcloud functions deploy start-sql-instances \
+gcloud functions deploy start-gke-node-pools \
 --gen2 \
 --runtime=nodejs18 \
 --region=asia-southeast1 \
@@ -74,7 +74,7 @@ gcloud functions deploy start-sql-instances \
 --entry-point=startInstances \
 --trigger-topic=start-instance-event
 
-gcloud functions deploy stop-sql-instances \
+gcloud functions deploy stop-gke-node-pools \
 --gen2 \
 --runtime=nodejs18 \
 --region=asia-southeast1 \
@@ -85,18 +85,18 @@ gcloud functions deploy stop-sql-instances \
 
 ## Trigger Pub/Sub Function
 
-Publish a message to start all instances in the project my-project-id:
+Publish a message to start all regional and zonal cluster node pools in the project my-project-id:
 
 ```
 gcloud pubsub topics publish start-instance-event \
 --message='{"project": "my-project-id"}'
 ```
 
-Publish a message to stop instances with label environment=dev in my-project-id project:
+Publish a message to stop zonal cluster node pools in asia-southeast1-c zone and my-project-id project:
 
 ```
 gcloud pubsub topics publish stop-instance-event \
---message='{"project": "my-project-id", labels: {"environment": "dev"}}'
+--message='{"project": "my-project-id", "zones": ["asia-southeast1-c"]}'
 ```
 
 Check function logs to see the result:
@@ -106,21 +106,21 @@ gcloud functions logs read \
   --gen2 \
   --region=asia-southeast1 \
   --limit=5 \
-  start-sql-instances
+  start-gke-node-pools
 ```
 
 ## Pub/Sub Message
 
 ### Fields
 
-| Field     | Description                            | Default                |
-| --------- | -------------------------------------- | ---------------------- |
-| `project` | Project containing Cloud SQL instances | Cloud Function project |
-| `labels`  | Instance labels                        | Empty                  |
+| Field     | Description                     | Default                |
+| --------- | ------------------------------- | ---------------------- |
+| `project` | Project containing GKE clusters | Cloud Function project |
+| `zones`   | List of zones                   | All zones              |
 
 ### Example Pub/Sub Message
 
-All instances in the my-project-id project:
+All zonal and regional clusters in the my-project-id project:
 
 ```
 {
@@ -128,14 +128,18 @@ All instances in the my-project-id project:
 }
 ```
 
-All instances with label owner=james and environment=dev in the my-project-id project:
+All zonal clusters in the my-project-id project and asia-southeast1-a, us-west1-b zones:
 
 ```
 {
   "project": "my-project-id",
-  "labels": {
-    "owner": "james"
-    "environment": "dev"
-  }
+  "zones": [
+    "asia-southeast1-a",
+    "us-west1-b"
+  ]
 }
 ```
+
+## Limitation
+
+If you are using node pool autoscaling, the min and max node count settings will be removed after you run the stop function.
