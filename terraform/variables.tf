@@ -88,18 +88,110 @@ variable "topic_message_retention_duration" {
   default     = null
 }
 
-variable "service_account_emails" {
+variable "start_compute_function" {
   type = object({
-    start_compute_function = string
-    stop_compute_function  = string
-    start_sql_function     = string
-    stop_sql_function      = string
+    enabled               = bool
+    service_account_email = string
+    timeout               = optional(number)
+    available_memory      = optional(string)
+    max_instance_count    = optional(number)
   })
-  description = "The existing service accounts to run cloud functions."
+  description = "The start Compute instances function settings."
   default = {
-    start_compute_function = ""
-    stop_compute_function  = ""
-    start_sql_function     = ""
-    stop_sql_function      = ""
+    enabled               = false
+    service_account_email = ""
+    timeout               = 540
+    available_memory      = "256M"
+    max_instance_count    = 3
+  }
+}
+
+variable "stop_compute_function" {
+  type = object({
+    enabled               = bool
+    service_account_email = string
+    timeout               = optional(number)
+    available_memory      = optional(string)
+    max_instance_count    = optional(number)
+  })
+  description = "The stop Compute instances function settings."
+  default = {
+    enabled               = false
+    service_account_email = ""
+    timeout               = 540
+    available_memory      = "256M"
+    max_instance_count    = 3
+  }
+}
+
+variable "start_sql_function" {
+  type = object({
+    enabled               = bool
+    service_account_email = string
+    timeout               = optional(number)
+    available_memory      = optional(string)
+    max_instance_count    = optional(number)
+  })
+  description = "The start SQL instance function settings."
+  default = {
+    enabled               = false
+    service_account_email = ""
+    timeout               = 540
+    available_memory      = "256M"
+    max_instance_count    = 3
+  }
+}
+
+variable "stop_sql_function" {
+  type = object({
+    enabled               = bool
+    service_account_email = string
+    timeout               = optional(number)
+    available_memory      = optional(string)
+    max_instance_count    = optional(number)
+  })
+  description = "The stop SQL instance function settings."
+  default = {
+    enabled               = false
+    service_account_email = ""
+    timeout               = 540
+    available_memory      = "256M"
+    max_instance_count    = 3
+  }
+}
+
+variable "start_gke_function" {
+  type = object({
+    enabled               = bool
+    service_account_email = string
+    timeout               = optional(number)
+    available_memory      = optional(string)
+    max_instance_count    = optional(number)
+  })
+  description = "The start GKE function settings."
+  default = {
+    enabled               = false
+    service_account_email = ""
+    timeout               = 540
+    available_memory      = "256M"
+    max_instance_count    = 3
+  }
+}
+
+variable "stop_gke_function" {
+  type = object({
+    enabled               = bool
+    service_account_email = string
+    timeout               = optional(number)
+    available_memory      = optional(string)
+    max_instance_count    = optional(number)
+  })
+  description = "The stop GKE function settings."
+  default = {
+    enabled               = false
+    service_account_email = ""
+    timeout               = 540
+    available_memory      = "256M"
+    max_instance_count    = 3
   }
 }

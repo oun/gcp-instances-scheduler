@@ -14,6 +14,12 @@ resource "google_service_account" "sql_function" {
   display_name = "Cloud Function Service Account"
 }
 
+resource "google_service_account" "gke_function" {
+  account_id   = "start-stop-gke-function"
+  project      = var.project_id
+  display_name = "Cloud Function Service Account"
+}
+
 resource "google_project_iam_member" "compute_function" {
   project = var.scheduled_project_id
   role    = "roles/compute.instanceAdmin.v1"
@@ -26,6 +32,12 @@ resource "google_project_iam_member" "sql_function" {
   member  = google_service_account.sql_function.member
 }
 
+resource "google_project_iam_member" "gke_function" {
+  project = var.scheduled_project_id
+  role    = "roles/container.clusterAdmin"
+  member  = google_service_account.gke_function.member
+}
+
 module "start_stop_scheduler" {
   source             = "../"
   project_id         = var.project_id
@@ -35,12 +47,31 @@ module "start_stop_scheduler" {
   start_job_schedule = "0 8 * * 1-5"
   stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
-  service_account_emails = {
-    start_compute_function = google_service_account.compute_function.email
-    stop_compute_function  = google_service_account.compute_function.email
-    start_sql_function     = google_service_account.sql_function.email
-    stop_sql_function      = google_service_account.sql_function.email
+  start_message      = local.message
+  stop_message       = local.message
+
+  start_compute_function = {
+    enabled               = true
+    service_account_email = google_service_account.compute_function.email
   }
-  start_message = local.message
-  stop_message  = local.message
+  stop_compute_function = {
+    enabled               = true
+    service_account_email = google_service_account.compute_function.email
+  }
+  start_sql_function = {
+    enabled               = true
+    service_account_email = google_service_account.sql_function.email
+  }
+  stop_sql_function = {
+    enabled               = true
+    service_account_email = google_service_account.sql_function.email
+  }
+  start_gke_function = {
+    enabled               = true
+    service_account_email = google_service_account.gke_function.email
+  }
+  stop_gke_function = {
+    enabled               = true
+    service_account_email = google_service_account.gke_function.email
+  }
 }
