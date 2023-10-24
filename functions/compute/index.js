@@ -64,10 +64,10 @@ functions.cloudEvent("stopInstances", async (cloudEvent) => {
 });
 
 const listInstances = async (project, zones, labels) => {
+  let instances = [];
   if (!zones || zones.length === 0) {
-    return await listAllInstances(project, labels);
+    instances = await listAllInstances(project, labels);
   } else {
-    let instances = [];
     for (zone of zones) {
       const options = {
         filter: createLabelFilter(labels),
@@ -78,9 +78,14 @@ const listInstances = async (project, zones, labels) => {
       console.log(`Found ${instanceList.length} instance(s) in zone ${zone}`);
       instances = instances.concat(instanceList);
     }
-    return instances;
   }
+  return filterInstances(instances);
 };
+
+const filterInstances = (instanceList) => {
+  // Exclude GKE nodes
+  return instanceList.filter((instance) => !("goog-gke-node" in instance.labels));
+}
 
 const listAllInstances = async (project, labels) => {
   let results = [];
