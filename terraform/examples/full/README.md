@@ -1,5 +1,7 @@
 # Terraform Start Stop Scheduler
 
+This example module schedule instances to start at 8AM and stop at 8PM (Bangkok timezone) on Monday to Friday. Cloud functions can start and stop Compute Engine instance, GKE node pools and SQL instances in the project `scheduled_project_id` that specified in start and stop message.
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
