@@ -39,7 +39,7 @@ resource "google_project_iam_member" "gke_function" {
 }
 
 module "start_stop_scheduler" {
-  source             = "../"
+  source             = "../../"
   project_id         = var.project_id
   region             = var.region
   start_topic        = "start-instance-event"
