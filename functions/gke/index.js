@@ -2,6 +2,8 @@ const functions = require("@google-cloud/functions-framework");
 const container = require("@google-cloud/container");
 const clusterClient = new container.ClusterManagerClient();
 
+const SHUTDOWN_TAINT_KEY = "scheduled-shutdown";
+
 async function waitForOperation(project, location, operation) {
   while (operation.status !== "DONE") {
     await sleep(5000);
@@ -18,6 +20,7 @@ functions.cloudEvent("startInstances", async (cloudEvent) => {
     await Promise.all(
       clusters.map(async (cluster) => {
         console.log(`Starting cluster ${cluster.name}`);
+        await removeShutdownNodePoolTaint(project, cluster);
         await resizeClusterNodePool(project, cluster, 1);
       })
     );
@@ -36,6 +39,7 @@ functions.cloudEvent("stopInstances", async (cloudEvent) => {
     await Promise.all(
       clusters.map(async (cluster) => {
         console.log(`Stopping cluster ${cluster.name}`);
+        await appendShutdownNodePoolTaint(project, cluster);
         await resizeClusterNodePool(project, cluster, 0);
       })
     );
@@ -50,21 +54,56 @@ functions.cloudEvent("stopInstances", async (cloudEvent) => {
 const resizeClusterNodePool = async (project, cluster, nodePoolSize) => {
   for (nodePool of cluster.nodePools) {
     const name = `projects/${project}/locations/${cluster.location}/clusters/${cluster.name}/nodePools/${nodePool.name}`;
-    // TODO: Should restore min and max node count settings when enable autoscaling
-    const [autoscalingOperations] = await clusterClient.setNodePoolAutoscaling({
-      name,
-      autoscaling: {
-        enabled: nodePoolSize > 0,
-      },
-    });
-    await waitForOperation(project, cluster.location, autoscalingOperations);
-    console.log(`Resizing node pool ${nodePool.name}`);
-    const [resizeOperation] = await clusterClient.setNodePoolSize({
+    console.log(`Resizing node pool ${cluster.name}/${nodePool.name}`);
+    const [operation] = await clusterClient.setNodePoolSize({
       name,
       nodeCount: nodePoolSize,
     });
-    await waitForOperation(project, cluster.location, resizeOperation);
+    await waitForOperation(project, cluster.location, operation);
   }
+};
+
+const appendShutdownNodePoolTaint = async (project, cluster) => {
+  for (nodePool of cluster.nodePools) {
+    const shutdownTaint = {
+      key: SHUTDOWN_TAINT_KEY,
+      value: "true",
+      effect: "NO_EXECUTE",
+    };
+    const taints = [...nodePool.config.taints, shutdownTaint];
+    console.log(
+      `Appending shutdown node pool taint ${cluster.name}/${nodePool.name}`
+    );
+    await updateClusterNodePoolTaints(project, cluster, nodePool, taints);
+  }
+};
+
+const removeShutdownNodePoolTaint = async (project, cluster) => {
+  for (nodePool of cluster.nodePools) {
+    const taints = nodePool.config.taints.filter(
+      (taint) => taint.key !== SHUTDOWN_TAINT_KEY
+    );
+    console.log(
+      `Removing shutdown node pool taint ${cluster.name}/${nodePool.name}`
+    );
+    await updateClusterNodePoolTaints(project, cluster, nodePool, taints);
+  }
+};
+
+const updateClusterNodePoolTaints = async (
+  project,
+  cluster,
+  nodePool,
+  taints
+) => {
+  const name = `projects/${project}/locations/${cluster.location}/clusters/${cluster.name}/nodePools/${nodePool.name}`;
+  const [operation] = await clusterClient.updateNodePool({
+    name,
+    taints: {
+      taints,
+    },
+  });
+  await waitForOperation(project, cluster.location, operation);
 };
 
 const listClusters = async (project, zones) => {

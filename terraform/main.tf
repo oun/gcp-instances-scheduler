@@ -56,7 +56,7 @@ resource "google_storage_bucket" "default" {
 module "function_start_compute_instances" {
   count                 = lookup(var.start_compute_function, "enabled", false) ? 1 : 0
   source                = "./modules/pubsub-function"
-  name                  = "start-compute-instances"
+  name                  = "start-gce-instances"
   project_id            = var.project_id
   description           = "Function for starting Compute Engine instances"
   bucket_name           = google_storage_bucket.default.name
@@ -73,7 +73,7 @@ module "function_start_compute_instances" {
 module "function_stop_compute_instances" {
   count                 = lookup(var.stop_compute_function, "enabled", false) ? 1 : 0
   source                = "./modules/pubsub-function"
-  name                  = "stop-compute-instances"
+  name                  = "stop-gce-instances"
   project_id            = var.project_id
   description           = "Function for stopping Compute Engine instances"
   bucket_name           = google_storage_bucket.default.name

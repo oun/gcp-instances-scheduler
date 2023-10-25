@@ -139,7 +139,3 @@ All zonal clusters in the my-project-id project and asia-southeast1-a, us-west1-
   ]
 }
 ```
-
-## Limitation
-
-If you are using node pool autoscaling, the min and max node count settings will be removed after you run the stop function.
