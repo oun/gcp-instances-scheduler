@@ -28,11 +28,11 @@ resource "google_cloudfunctions2_function" "default" {
   }
 
   service_config {
-    max_instance_count             = var.max_instance_count
+    max_instance_count             = coalesce(var.max_instance_count, 1)
     min_instance_count             = var.min_instance_count
-    available_memory               = var.available_memory
-    timeout_seconds                = var.timeout
-    ingress_settings               = var.ingress_settings
+    available_memory               = coalesce(var.available_memory, "256M")
+    timeout_seconds                = coalesce(var.timeout, 540)
+    ingress_settings               = coalesce(var.ingress_settings, "ALLOW_INTERNAL_ONLY")
     all_traffic_on_latest_revision = true
     service_account_email          = var.service_account_email
   }
