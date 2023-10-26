@@ -27,17 +27,7 @@ functions.cloudEvent("startInstances", async (cloudEvent) => {
     await Promise.all(
       instances.map(async (instance) => {
         console.log(`Starting instance ${instance.name}`);
-        const [response] = await instancesClient.patch({
-          project: payload.project,
-          instance: instance.name,
-          body: {
-            settings: {
-              activationPolicy: "ALWAYS",
-            },
-          },
-        });
-
-        return waitForOperation(payload.project, response);
+        await updateActivationPolicy(instance, "ALWAYS");
       })
     );
 
@@ -59,17 +49,7 @@ functions.cloudEvent("stopInstances", async (cloudEvent) => {
     await Promise.all(
       instances.map(async (instance) => {
         console.log(`Stopping instance ${instance.name}`);
-        const [response] = await instancesClient.patch({
-          project: payload.project,
-          instance: instance.name,
-          body: {
-            settings: {
-              activationPolicy: "NEVER",
-            },
-          },
-        });
-
-        return waitForOperation(payload.project, response);
+        await updateActivationPolicy(instance, "NEVER");
       })
     );
 
@@ -79,6 +59,20 @@ functions.cloudEvent("stopInstances", async (cloudEvent) => {
     console.log(err);
   }
 });
+
+const updateActivationPolicy = async (instance, activationPolicy) => {
+  const [response] = await instancesClient.patch({
+    project: instance.project,
+    instance: instance.name,
+    body: {
+      settings: {
+        activationPolicy,
+      },
+    },
+  });
+
+  return waitForOperation(instance.project, response);
+};
 
 const listInstances = async ({ project, activationPolicy, labels }) => {
   const options = {
