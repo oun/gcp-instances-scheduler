@@ -5,7 +5,7 @@ data "archive_file" "default" {
 }
 
 resource "google_storage_bucket_object" "default" {
-  name   = "${var.name}/function-source.zip"
+  name   = format("%s/%s-%s.zip", var.name, "function-source", data.archive_file.default.output_md5)
   bucket = var.bucket_name
   source = data.archive_file.default.output_path
 }
@@ -29,7 +29,7 @@ resource "google_cloudfunctions2_function" "default" {
 
   service_config {
     max_instance_count             = var.max_instance_count
-    min_instance_count             = 1
+    min_instance_count             = var.min_instance_count
     available_memory               = var.available_memory
     timeout_seconds                = var.timeout
     ingress_settings               = var.ingress_settings

@@ -102,7 +102,7 @@ variable "start_compute_function" {
     service_account_email = ""
     timeout               = 540
     available_memory      = "256M"
-    max_instance_count    = 3
+    max_instance_count    = 1
   }
 }
 
@@ -120,7 +120,7 @@ variable "stop_compute_function" {
     service_account_email = ""
     timeout               = 540
     available_memory      = "256M"
-    max_instance_count    = 3
+    max_instance_count    = 1
   }
 }
 
@@ -138,7 +138,7 @@ variable "start_sql_function" {
     service_account_email = ""
     timeout               = 540
     available_memory      = "256M"
-    max_instance_count    = 3
+    max_instance_count    = 1
   }
 }
 
@@ -156,7 +156,7 @@ variable "stop_sql_function" {
     service_account_email = ""
     timeout               = 540
     available_memory      = "256M"
-    max_instance_count    = 3
+    max_instance_count    = 1
   }
 }
 
@@ -174,7 +174,7 @@ variable "start_gke_function" {
     service_account_email = ""
     timeout               = 540
     available_memory      = "256M"
-    max_instance_count    = 3
+    max_instance_count    = 1
   }
 }
 
@@ -192,6 +192,6 @@ variable "stop_gke_function" {
     service_account_email = ""
     timeout               = 540
     available_memory      = "256M"
-    max_instance_count    = 3
+    max_instance_count    = 1
   }
 }

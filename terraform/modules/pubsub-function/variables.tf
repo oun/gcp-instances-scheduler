@@ -63,9 +63,15 @@ variable "available_memory" {
   description = "The amount of memory allotted for the function to use."
 }
 
+variable "min_instance_count" {
+  type        = number
+  default     = null
+  description = "The limit on the minimum number of function instances that may coexist at a given time."
+}
+
 variable "max_instance_count" {
   type        = number
-  default     = 3
+  default     = 1
   description = "The limit on the maximum number of function instances that may coexist at a given time."
 }
 
