@@ -63,11 +63,13 @@ variable "time_zone" {
 variable "start_topic" {
   type        = string
   description = "The Pub/Sub topic name for start event."
+  default     = "start-instance-event"
 }
 
 variable "stop_topic" {
   type        = string
   description = "The Pub/Sub topic name for stop event."
+  default     = "stop-instance-event"
 }
 
 variable "topic_labels" {
@@ -98,7 +100,7 @@ variable "start_compute_function" {
   })
   description = "The start Compute instances function settings."
   default = {
-    enabled               = false
+    enabled = false
   }
 }
 
@@ -112,7 +114,7 @@ variable "stop_compute_function" {
   })
   description = "The stop Compute instances function settings."
   default = {
-    enabled               = false
+    enabled = false
   }
 }
 
@@ -126,7 +128,7 @@ variable "start_sql_function" {
   })
   description = "The start SQL instance function settings."
   default = {
-    enabled               = false
+    enabled = false
   }
 }
 
@@ -140,7 +142,7 @@ variable "stop_sql_function" {
   })
   description = "The stop SQL instance function settings."
   default = {
-    enabled               = false
+    enabled = false
   }
 }
 
@@ -154,7 +156,7 @@ variable "start_gke_function" {
   })
   description = "The start GKE function settings."
   default = {
-    enabled               = false
+    enabled = false
   }
 }
 
@@ -168,6 +170,6 @@ variable "stop_gke_function" {
   })
   description = "The stop GKE function settings."
   default = {
-    enabled               = false
+    enabled = false
   }
 }

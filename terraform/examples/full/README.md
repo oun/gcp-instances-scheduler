@@ -4,11 +4,11 @@ This example module schedule instances to start at 8AM and stop at 8PM (Bangkok 
 
 ## Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| project\_id | The project ID to host resources | `string` | n/a | yes |
-| region | The region to host resources | `string` | n/a | yes |
-| scheduled\_project\_id | The project ID where resources will be scheduled start and stop. | `string` | n/a | yes |
+| Name                 | Description                                                      | Type     | Default | Required |
+| -------------------- | ---------------------------------------------------------------- | -------- | ------- | :------: |
+| project_id           | The project ID to host resources                                 | `string` | n/a     |   yes    |
+| region               | The region to host resources                                     | `string` | n/a     |   yes    |
+| scheduled_project_id | The project ID where resources will be scheduled start and stop. | `string` | n/a     |   yes    |
 
 To provision this example, run the following from within this directory:
 
