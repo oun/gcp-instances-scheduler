@@ -15,8 +15,8 @@ async function waitForOperation(project, location, operation) {
 
 functions.cloudEvent("startInstances", async (cloudEvent) => {
   try {
-    const { project, zones } = await parsePayload(cloudEvent);
-    const clusters = await listClusters(project, zones);
+    const { project, zones, labels } = await parsePayload(cloudEvent);
+    const clusters = await listClusters(project, zones, labels);
     await Promise.all(
       clusters.map(async (cluster) => {
         console.log(`Starting cluster ${cluster.name}`);
@@ -34,8 +34,8 @@ functions.cloudEvent("startInstances", async (cloudEvent) => {
 
 functions.cloudEvent("stopInstances", async (cloudEvent) => {
   try {
-    const { project, zones } = await parsePayload(cloudEvent);
-    const clusters = await listClusters(project, zones);
+    const { project, zones, labels } = await parsePayload(cloudEvent);
+    const clusters = await listClusters(project, zones, labels);
     await Promise.all(
       clusters.map(async (cluster) => {
         console.log(`Stopping cluster ${cluster.name}`);
@@ -106,24 +106,55 @@ const updateClusterNodePoolTaints = async (
   await waitForOperation(project, cluster.location, operation);
 };
 
-const listClusters = async (project, zones) => {
+const listClusters = async (project, zones, labels) => {
   if (!zones || zones.length === 0) {
-    const [{ clusters }] = await clusterClient.listClusters({
+    let [{ clusters }] = await clusterClient.listClusters({
       parent: `projects/${project}/locations/-`,
     });
+    clusters = filterLabels(clusters, labels);
     console.log(`Found ${clusters.length} cluster(s) in all zones and regions`);
     return clusters;
   } else {
     let clusters = [];
     for (zone of zones) {
-      const [{ clusters: clusterList }] = await clusterClient.listClusters({
+      let [{ clusters: clusterList }] = await clusterClient.listClusters({
         parent: `projects/${project}/locations/${zone}`,
       });
+      clusterList = filterLabels(clusterList, labels);
       console.log(`Found ${clusterList.length} cluster(s) in zone ${zone}`);
       clusters = clusters.concat(clusterList);
     }
     return clusters;
   }
+};
+
+const filterLabels = (clusters, labels) => {
+  if (!labels || labels.length === 0) {
+    return clusters;
+  }
+  return clusters
+    .map((cluster) => ({
+      ...cluster,
+      nodePools: cluster.nodePools.filter((nodePool) =>
+        containsLabels(nodePool, labels)
+      ),
+    }))
+    .filter((cluster) => cluster.nodePools.length > 0);
+};
+
+const containsLabels = (nodePool, labels) => {
+  const nodePoolLabels = nodePool.config.resourceLabels;
+  for (labelKey of Object.keys(labels)) {
+    if (
+      !(
+        labelKey in nodePoolLabels &&
+        nodePoolLabels[labelKey] === labels[labelKey]
+      )
+    ) {
+      return false;
+    }
+  }
+  return true;
 };
 
 const parsePayload = async (cloudEvent) => {

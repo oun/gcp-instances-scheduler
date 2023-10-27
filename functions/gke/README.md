@@ -99,6 +99,12 @@ gcloud pubsub topics publish stop-instance-event \
 --message='{"project": "my-project-id", "zones": ["asia-southeast1-c"]}'
 ```
 
+Publish a message to stop cluster node pools with resource label environment=dev in my-project-id project:
+
+```
+gcloud pubsub topics publish stop-instance-event \
+--message='{"project": "my-project-id", labels: {"environment": "dev"}}'
+
 Check function logs to see the result:
 
 ```
@@ -113,10 +119,11 @@ gcloud functions logs read \
 
 ### Fields
 
-| Field     | Description                     | Default                |
-| --------- | ------------------------------- | ---------------------- |
-| `project` | Project containing GKE clusters | Cloud Function project |
-| `zones`   | List of zones                   | All zones              |
+| Field     | Description                        | Default                |
+| --------- | ---------------------------------- | ---------------------- |
+| `project` | Project containing GKE clusters    | Cloud Function project |
+| `zones`   | List of zones                      | All zones              |
+| `labels`  | List of node pools resource labels | Empty                  |
 
 ### Example Pub/Sub Message
 
@@ -137,5 +144,17 @@ All zonal clusters in the my-project-id project and asia-southeast1-a, us-west1-
     "asia-southeast1-a",
     "us-west1-b"
   ]
+}
+```
+
+All cluster node pools with resource label owner=james and environment=dev in the my-project-id project:
+
+```
+{
+  "project": "my-project-id",
+  "labels": {
+    "owner": "james"
+    "environment": "dev"
+  }
 }
 ```
