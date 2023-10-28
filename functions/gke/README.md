@@ -104,6 +104,7 @@ Publish a message to stop cluster node pools with resource label environment=dev
 ```
 gcloud pubsub topics publish stop-instance-event \
 --message='{"project": "my-project-id", labels: {"environment": "dev"}}'
+```
 
 Check function logs to see the result:
 
