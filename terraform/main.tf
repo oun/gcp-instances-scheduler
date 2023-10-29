@@ -136,6 +136,10 @@ module "function_start_gke_node_pools" {
   timeout               = var.start_gke_function.timeout
   available_memory      = var.start_gke_function.available_memory
   max_instance_count    = var.start_gke_function.max_instance_count
+  environment_variables = {
+    SHUTDOWN_TAINT_KEY   = var.start_gke_function.shutdown_taint_key
+    SHUTDOWN_TAINT_VALUE = var.start_gke_function.shutdown_taint_value
+  }
 }
 
 module "function_stop_gke_node_pools" {
@@ -153,4 +157,8 @@ module "function_stop_gke_node_pools" {
   timeout               = var.stop_gke_function.timeout
   available_memory      = var.stop_gke_function.available_memory
   max_instance_count    = var.stop_gke_function.max_instance_count
+  environment_variables = {
+    SHUTDOWN_TAINT_KEY   = var.stop_gke_function.shutdown_taint_key
+    SHUTDOWN_TAINT_VALUE = var.stop_gke_function.shutdown_taint_value
+  }
 }

@@ -2,7 +2,8 @@ const functions = require("@google-cloud/functions-framework");
 const container = require("@google-cloud/container");
 const clusterClient = new container.ClusterManagerClient();
 
-const SHUTDOWN_TAINT_KEY = "scheduled-shutdown";
+const SHUTDOWN_TAINT_KEY = process.env.SHUTDOWN_TAINT_KEY ?? "scheduled-shutdown";
+const SHUTDOWN_TAINT_VALUE = process.env.SHUTDOWN_TAINT_VALUE ?? "true";
 
 async function waitForOperation(project, location, operation) {
   while (operation.status !== "DONE") {
@@ -67,7 +68,7 @@ const appendShutdownNodePoolTaint = async (project, cluster) => {
   for (nodePool of cluster.nodePools) {
     const shutdownTaint = {
       key: SHUTDOWN_TAINT_KEY,
-      value: "true",
+      value: SHUTDOWN_TAINT_VALUE,
       effect: "NO_EXECUTE",
     };
     const taints = [...nodePool.config.taints, shutdownTaint];

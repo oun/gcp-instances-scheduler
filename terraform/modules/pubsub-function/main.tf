@@ -35,6 +35,7 @@ resource "google_cloudfunctions2_function" "default" {
     ingress_settings               = coalesce(var.ingress_settings, "ALLOW_INTERNAL_ONLY")
     all_traffic_on_latest_revision = true
     service_account_email          = var.service_account_email
+    environment_variables          = var.environment_variables
   }
 
   event_trigger {

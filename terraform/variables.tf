@@ -153,6 +153,8 @@ variable "start_gke_function" {
     timeout               = optional(number)
     available_memory      = optional(string)
     max_instance_count    = optional(number)
+    shutdown_taint_key    = optional(string)
+    shutdown_taint_value  = optional(string)
   })
   description = "The start GKE function settings."
   default = {
@@ -167,6 +169,8 @@ variable "stop_gke_function" {
     timeout               = optional(number)
     available_memory      = optional(string)
     max_instance_count    = optional(number)
+    shutdown_taint_key    = optional(string)
+    shutdown_taint_value  = optional(string)
   })
   description = "The stop GKE function settings."
   default = {

@@ -80,3 +80,9 @@ variable "ingress_settings" {
   default     = "ALLOW_INTERNAL_ONLY"
   description = "The ingress settings for the function."
 }
+
+variable "environment_variables" {
+  type        = map(string)
+  default     = {}
+  description = "A set of key/value environment variable pairs to assign to the function."
+}
