@@ -44,4 +44,6 @@ resource "google_cloudfunctions2_function" "default" {
     pubsub_topic   = var.pubsub_topic
     retry_policy   = "RETRY_POLICY_DO_NOT_RETRY"
   }
+
+  labels = var.function_labels
 }

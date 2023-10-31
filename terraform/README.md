@@ -51,30 +51,31 @@ Then perform the following commands:
 
 ## Inputs
 
-| Name                             | Description                                          | Type     | Default                | Required |
-| -------------------------------- | ---------------------------------------------------- | -------- | ---------------------- | :------: |
-| project_id                       | The project ID to host resources.                    | `string` | n/a                    |   yes    |
-| region                           | The region to host resources.                        | `string` | n/a                    |   yes    |
-| start_job_name                   | The name of scheduler that trigger start event.      | `string` | "start-instances"      |   yes    |
-| start_job_description            | The additional text to describe the job.             | `string` | ""                     |    no    |
-| start_job_schedule               | The job frequency in cron syntax.                    | `string` | n/a                    |   yes    |
-| start_message                    | The message to send to the start event topic.        | `string` | "{}"                   |    no    |
-| stop_job_name                    | The name of scheduler that trigger stop event.       | `string` | "stop-instances"       |    no    |
-| stop_job_description             | The additional text to describe the job.             | `string` | ""                     |   yes    |
-| stop_job_schedule                | The job frequency in cron syntax.                    | `string` | n/a                    |    no    |
-| stop_message                     | The message to send to the stop event topic.         | `string` | "{}"                   |    no    |
-| timezone                         | The timezone to use in scheduler.                    | `string` | "Etc/UTC"              |    no    |
-| start_topic                      | The Pub/Sub topic name for start event.              | `string` | "start-instance-event" |    no    |
-| stop_topic                       | The Pub/Sub topic name for stop event.               | `string` | "stop-instance-event"  |    no    |
-| topic_labels                     | A map of labels to assign to the Pub/Sub topic.      | `string` | {}                     |    no    |
-| topic_kms_key_name               | The resource name of the Cloud KMS CryptoKey.        | `string` | n/a                    |    no    |
-| topic_message_retention_duration | The minimum duration in seconds to retain a message. | `string` | n/a                    |    no    |
-| start_compute_function           | The settings for start compute instances function.   | `object` | n/a                    |    no    |
-| stop_compute_function            | The settings for stop compute instances function.    | `object` | n/a                    |    no    |
-| start_sql_function               | The settings for start SQL instances function.       | `object` | n/a                    |    no    |
-| stop_sql_function                | The settings for stop SQL instances function.        | `object` | n/a                    |    no    |
-| start_gke_function               | The settings for start GKE node pools function.      | `object` | n/a                    |    no    |
-| stop_gke_function                | The settings for stop GKE node pools function.       | `object` | n/a                    |    no    |
+| Name                             | Description                                               | Type          | Default                | Required |
+| -------------------------------- | --------------------------------------------------------- | ------------- | ---------------------- | :------: |
+| project_id                       | The project ID to host resources.                         | `string`      | n/a                    |   yes    |
+| region                           | The region to host resources.                             | `string`      | n/a                    |   yes    |
+| start_job_name                   | The name of scheduler that trigger start event.           | `string`      | "start-instances"      |   yes    |
+| start_job_description            | The additional text to describe the job.                  | `string`      | ""                     |    no    |
+| start_job_schedule               | The job frequency in cron syntax.                         | `string`      | n/a                    |   yes    |
+| start_message                    | The message to send to the start event topic.             | `string`      | "{}"                   |    no    |
+| stop_job_name                    | The name of scheduler that trigger stop event.            | `string`      | "stop-instances"       |    no    |
+| stop_job_description             | The additional text to describe the job.                  | `string`      | ""                     |   yes    |
+| stop_job_schedule                | The job frequency in cron syntax.                         | `string`      | n/a                    |    no    |
+| stop_message                     | The message to send to the stop event topic.              | `string`      | "{}"                   |    no    |
+| timezone                         | The timezone to use in scheduler.                         | `string`      | "Etc/UTC"              |    no    |
+| start_topic                      | The Pub/Sub topic name for start event.                   | `string`      | "start-instance-event" |    no    |
+| stop_topic                       | The Pub/Sub topic name for stop event.                    | `string`      | "stop-instance-event"  |    no    |
+| topic_labels                     | A map of labels to assign to the Pub/Sub topic.           | `map(string)` | {}                     |    no    |
+| topic_kms_key_name               | The resource name of the Cloud KMS CryptoKey.             | `string`      | n/a                    |    no    |
+| topic_message_retention_duration | The minimum duration in seconds to retain a message.      | `string`      | n/a                    |    no    |
+| start_compute_function           | The settings for start compute instances function.        | `object`      | n/a                    |    no    |
+| stop_compute_function            | The settings for stop compute instances function.         | `object`      | n/a                    |    no    |
+| start_sql_function               | The settings for start SQL instances function.            | `object`      | n/a                    |    no    |
+| stop_sql_function                | The settings for stop SQL instances function.             | `object`      | n/a                    |    no    |
+| start_gke_function               | The settings for start GKE node pools function.           | `object`      | n/a                    |    no    |
+| stop_gke_function                | The settings for stop GKE node pools function.            | `object`      | n/a                    |    no    |
+| function_labels                  | A set of key/value label pairs to assign to the function. | `map(string)` | {}                     |    no    |
 
 The `cloud function` settings block:
 

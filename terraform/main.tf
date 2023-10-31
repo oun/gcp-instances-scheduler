@@ -68,6 +68,7 @@ module "function_start_compute_instances" {
   timeout               = var.start_compute_function.timeout
   available_memory      = var.start_compute_function.available_memory
   max_instance_count    = var.start_compute_function.max_instance_count
+  function_labels       = var.function_labels
 }
 
 module "function_stop_compute_instances" {
@@ -85,6 +86,7 @@ module "function_stop_compute_instances" {
   timeout               = var.stop_compute_function.timeout
   available_memory      = var.stop_compute_function.available_memory
   max_instance_count    = var.stop_compute_function.max_instance_count
+  function_labels       = var.function_labels
 }
 
 module "function_start_sql_instances" {
@@ -102,6 +104,7 @@ module "function_start_sql_instances" {
   timeout               = var.start_sql_function.timeout
   available_memory      = var.start_sql_function.available_memory
   max_instance_count    = var.start_sql_function.max_instance_count
+  function_labels       = var.function_labels
 }
 
 module "function_stop_sql_instances" {
@@ -119,6 +122,7 @@ module "function_stop_sql_instances" {
   timeout               = var.stop_sql_function.timeout
   available_memory      = var.stop_sql_function.available_memory
   max_instance_count    = var.stop_sql_function.max_instance_count
+  function_labels       = var.function_labels
 }
 
 module "function_start_gke_node_pools" {
@@ -140,6 +144,7 @@ module "function_start_gke_node_pools" {
     SHUTDOWN_TAINT_KEY   = var.start_gke_function.shutdown_taint_key
     SHUTDOWN_TAINT_VALUE = var.start_gke_function.shutdown_taint_value
   }
+  function_labels = var.function_labels
 }
 
 module "function_stop_gke_node_pools" {
@@ -161,4 +166,5 @@ module "function_stop_gke_node_pools" {
     SHUTDOWN_TAINT_KEY   = var.stop_gke_function.shutdown_taint_key
     SHUTDOWN_TAINT_VALUE = var.stop_gke_function.shutdown_taint_value
   }
+  function_labels = var.function_labels
 }

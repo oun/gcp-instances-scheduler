@@ -177,3 +177,9 @@ variable "stop_gke_function" {
     enabled = false
   }
 }
+
+variable "function_labels" {
+  type        = map(string)
+  default     = {}
+  description = "A set of key/value label pairs to assign to the function."
+}

@@ -86,3 +86,9 @@ variable "environment_variables" {
   default     = {}
   description = "A set of key/value environment variable pairs to assign to the function."
 }
+
+variable "function_labels" {
+  type        = map(string)
+  default     = {}
+  description = "A set of key/value label pairs to assign to the function."
+}
