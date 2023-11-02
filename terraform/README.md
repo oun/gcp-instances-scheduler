@@ -28,8 +28,9 @@ module "start_stop_scheduler" {
   start_job_schedule = "0 8 * * 1-5"
   stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
-  start_message      = "{\"project\": \"gce-instance-project-id\"}"
-  stop_message       = "{\"project\": \"gce-instance-project-id\"}"
+  scheduled_resource_filter = {
+    project = "gce-instance-project-id"
+  }
 
   start_compute_function = {
     enabled               = true
@@ -58,11 +59,10 @@ Then perform the following commands:
 | start_job_name                   | The name of scheduler that trigger start event.           | `string`      | "start-instances"      |   yes    |
 | start_job_description            | The additional text to describe the job.                  | `string`      | ""                     |    no    |
 | start_job_schedule               | The job frequency in cron syntax.                         | `string`      | n/a                    |   yes    |
-| start_message                    | The message to send to the start event topic.             | `string`      | "{}"                   |    no    |
 | stop_job_name                    | The name of scheduler that trigger stop event.            | `string`      | "stop-instances"       |    no    |
 | stop_job_description             | The additional text to describe the job.                  | `string`      | ""                     |   yes    |
 | stop_job_schedule                | The job frequency in cron syntax.                         | `string`      | n/a                    |    no    |
-| stop_message                     | The message to send to the stop event topic.              | `string`      | "{}"                   |    no    |
+| scheduled_resource_filter        | The filter that filter resources for scheduling.          | `object`      | {}                     |    no    |
 | timezone                         | The timezone to use in scheduler.                         | `string`      | "Etc/UTC"              |    no    |
 | start_topic                      | The Pub/Sub topic name for start event.                   | `string`      | "start-instance-event" |    no    |
 | stop_topic                       | The Pub/Sub topic name for stop event.                    | `string`      | "stop-instance-event"  |    no    |
@@ -76,6 +76,13 @@ Then perform the following commands:
 | start_gke_function               | The settings for start GKE node pools function.           | `object`      | n/a                    |    no    |
 | stop_gke_function                | The settings for stop GKE node pools function.            | `object`      | n/a                    |    no    |
 | function_labels                  | A set of key/value label pairs to assign to the function. | `map(string)` | {}                     |    no    |
+
+The `scheduled_resource_filter` block:
+
+| Name    | Description                       | Type          | Default      | Required |
+| ------- | --------------------------------- | ------------- | ------------ | :------: |
+| project | The project ID to host resources. | `string`      | `project_id` |    no    |
+| labels  | The resource labels.              | `map(string)` | n/a          |    no    |
 
 The `cloud function` settings block:
 

@@ -37,8 +37,9 @@ module "start_stop_scheduler" {
   start_job_schedule = "0 8 * * 1-5"
   stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
-  start_message      = "{\"project\": \"gce-instance-project-id\"}"
-  stop_message       = "{\"project\": \"gce-instance-project-id\"}"
+  scheduled_resource_filter = {
+    project = "gce-instance-project-id"
+  }
 
   start_compute_function = {
     enabled               = true

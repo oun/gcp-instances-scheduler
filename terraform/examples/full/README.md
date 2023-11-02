@@ -6,8 +6,8 @@ This example module schedule instances to start at 8AM and stop at 8PM (Bangkok 
 
 | Name                 | Description                                                      | Type     | Default | Required |
 | -------------------- | ---------------------------------------------------------------- | -------- | ------- | :------: |
-| project_id           | The project ID to host resources                                 | `string` | n/a     |   yes    |
-| region               | The region to host resources                                     | `string` | n/a     |   yes    |
+| project_id           | The project ID to host resources.                                | `string` | n/a     |   yes    |
+| region               | The region to host resources.                                    | `string` | n/a     |   yes    |
 | scheduled_project_id | The project ID where resources will be scheduled start and stop. | `string` | n/a     |   yes    |
 
 To provision this example, run the following from within this directory:

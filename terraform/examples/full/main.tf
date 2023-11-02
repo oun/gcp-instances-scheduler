@@ -1,7 +1,3 @@
-locals {
-  message = "{\"project\": \"${var.scheduled_project_id}\"}"
-}
-
 resource "google_service_account" "gce_function" {
   account_id   = "start-stop-gce-function"
   project      = var.project_id
@@ -47,8 +43,9 @@ module "start_stop_scheduler" {
   start_job_schedule = "0 8 * * 1-5"
   stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
-  start_message      = local.message
-  stop_message       = local.message
+  scheduled_resource_filter = {
+    project = var.scheduled_project_id
+  }
 
   start_compute_function = {
     enabled               = true

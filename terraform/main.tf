@@ -1,3 +1,8 @@
+locals {
+  scheduled_project = coalesce(var.scheduled_resource_filter.project, var.project_id)
+  pubsub_message    = jsonencode({ project = local.scheduled_project, labels = var.scheduled_resource_filter.labels })
+}
+
 resource "google_cloud_scheduler_job" "start_job" {
   name        = var.start_job_name
   description = var.start_job_description
@@ -8,7 +13,7 @@ resource "google_cloud_scheduler_job" "start_job" {
 
   pubsub_target {
     topic_name = google_pubsub_topic.start_topic.id
-    data       = base64encode(var.start_message)
+    data       = base64encode(local.pubsub_message)
   }
 }
 
@@ -22,7 +27,7 @@ resource "google_cloud_scheduler_job" "stop_job" {
 
   pubsub_target {
     topic_name = google_pubsub_topic.stop_topic.id
-    data       = base64encode(var.stop_message)
+    data       = base64encode(local.pubsub_message)
   }
 }
 

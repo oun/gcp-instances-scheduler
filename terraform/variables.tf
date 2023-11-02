@@ -25,12 +25,6 @@ variable "start_job_schedule" {
   description = "The job frequency, in cron syntax"
 }
 
-variable "start_message" {
-  type        = string
-  description = "The data to send in the topic message."
-  default     = "{}"
-}
-
 variable "stop_job_name" {
   type        = string
   description = "The name of the scheduled job to run"
@@ -46,12 +40,6 @@ variable "stop_job_description" {
 variable "stop_job_schedule" {
   type        = string
   description = "The job frequency, in cron syntax"
-}
-
-variable "stop_message" {
-  type        = string
-  description = "The data to send in the topic message."
-  default     = "{}"
 }
 
 variable "time_zone" {
@@ -76,6 +64,16 @@ variable "topic_labels" {
   type        = map(string)
   description = "A map of labels to assign to the Pub/Sub topic."
   default     = {}
+}
+
+variable "scheduled_resource_filter" {
+  type = object({
+    project = optional(string)
+    labels  = optional(map(string))
+  })
+  description = "The filter that filter resources for scheduling."
+  default = {
+  }
 }
 
 variable "topic_kms_key_name" {
