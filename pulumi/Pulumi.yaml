@@ -1,22 +1,19 @@
-name: ${PROJECT}
-description: ${DESCRIPTION}
+name: gcp-instances-scheduler
+description: The scheduler and functions to start and stop GKE node pools, Compute Engine, SQL instances
 runtime: nodejs
-template:
-  description: A TypeScript program to deploy a start stop scheduler on Google Cloud
-  config:
-    gcp:project:
-      description: The Google Cloud project to deploy into
-    gcp:region:
-      description: The Google Cloud region to deploy into
-      default: us-central1
-    scheduledProject:
-      description: The project ID that host resources that you want to start and stop on a schedule
-    startJobSchedule:
-      description: The cron schedule of start job
-      default: 0 8 * * 1-5
-    stopJobSchedule:
-      description: The cron schedule of stop job
-      default: 0 20 * * 1-5
-    timeZone:
-      description: The schedule timezone
-      default: Etc/UTC
+config:
+  scheduledProject:
+    type: string
+    description: The project ID that host resources that you want to start and stop on a schedule
+  startJobSchedule:
+    type: string
+    description: The cron schedule of start job in cron syntax
+    default: 0 8 * * 1-5
+  stopJobSchedule:
+    type: string
+    description: The cron schedule of stop job in cron syntax
+    default: 0 20 * * 1-5
+  timeZone:
+    type: string
+    description: The schedule timezone
+    default: Etc/UTC
