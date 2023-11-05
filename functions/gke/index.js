@@ -72,12 +72,8 @@ const appendShutdownNodePoolTaint = async (project, cluster) => {
       value: SHUTDOWN_TAINT_VALUE,
       effect: "NO_EXECUTE",
     };
-    const hasTaint = nodePool.config.taints.findIndex(
-      ({ key, value }) =>
-        key === shutdownTaint.key && value === shutdownTaint.value
-    );
-
-    if (hasTaint === -1) {
+    
+    if (!hasShutdownTaint(nodePool.config.taints)) {
       const taints = [...nodePool.config.taints, shutdownTaint];
       console.log(
         `Appending shutdown node pool taint ${cluster.name}/${nodePool.name}`
@@ -89,15 +85,23 @@ const appendShutdownNodePoolTaint = async (project, cluster) => {
 
 const removeShutdownNodePoolTaint = async (project, cluster) => {
   for (nodePool of cluster.nodePools) {
-    const taints = nodePool.config.taints.filter(
-      (taint) => taint.key !== SHUTDOWN_TAINT_KEY
-    );
-    console.log(
-      `Removing shutdown node pool taint ${cluster.name}/${nodePool.name}`
-    );
-    await updateClusterNodePoolTaints(project, cluster, nodePool, taints);
+    if (hasShutdownTaint(nodePool.config.taints)) {
+      const taints = nodePool.config.taints.filter(
+        (taint) => taint.key !== SHUTDOWN_TAINT_KEY
+      );
+      console.log(
+        `Removing shutdown node pool taint ${cluster.name}/${nodePool.name}`
+      );
+      await updateClusterNodePoolTaints(project, cluster, nodePool, taints);
+    }
   }
 };
+
+const hasShutdownTaint = (taints) =>
+  taints.findIndex(
+    ({ key, value }) =>
+      key === SHUTDOWN_TAINT_KEY && value === SHUTDOWN_TAINT_VALUE
+  ) !== -1;
 
 const updateClusterNodePoolTaints = async (
   project,
