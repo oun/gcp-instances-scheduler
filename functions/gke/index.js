@@ -2,7 +2,8 @@ const functions = require("@google-cloud/functions-framework");
 const container = require("@google-cloud/container");
 const clusterClient = new container.ClusterManagerClient();
 
-const SHUTDOWN_TAINT_KEY = process.env.SHUTDOWN_TAINT_KEY ?? "scheduled-shutdown";
+const SHUTDOWN_TAINT_KEY =
+  process.env.SHUTDOWN_TAINT_KEY ?? "scheduled-shutdown";
 const SHUTDOWN_TAINT_VALUE = process.env.SHUTDOWN_TAINT_VALUE ?? "true";
 
 async function waitForOperation(project, location, operation) {
@@ -71,11 +72,18 @@ const appendShutdownNodePoolTaint = async (project, cluster) => {
       value: SHUTDOWN_TAINT_VALUE,
       effect: "NO_EXECUTE",
     };
-    const taints = [...nodePool.config.taints, shutdownTaint];
-    console.log(
-      `Appending shutdown node pool taint ${cluster.name}/${nodePool.name}`
+    const hasTaint = nodePool.config.taints.findIndex(
+      ({ key, value }) =>
+        key === shutdownTaint.key && value === shutdownTaint.value
     );
-    await updateClusterNodePoolTaints(project, cluster, nodePool, taints);
+
+    if (hasTaint === -1) {
+      const taints = [...nodePool.config.taints, shutdownTaint];
+      console.log(
+        `Appending shutdown node pool taint ${cluster.name}/${nodePool.name}`
+      );
+      await updateClusterNodePoolTaints(project, cluster, nodePool, taints);
+    }
   }
 };
 
@@ -109,24 +117,33 @@ const updateClusterNodePoolTaints = async (
 
 const listClusters = async (project, zones, labels) => {
   if (!zones || zones.length === 0) {
-    let [{ clusters }] = await clusterClient.listClusters({
-      parent: `projects/${project}/locations/-`,
-    });
+    let clusters = await findClusters(project);
     clusters = filterLabels(clusters, labels);
     console.log(`Found ${clusters.length} cluster(s) in all zones and regions`);
     return clusters;
   } else {
     let clusters = [];
     for (zone of zones) {
-      let [{ clusters: clusterList }] = await clusterClient.listClusters({
-        parent: `projects/${project}/locations/${zone}`,
-      });
+      let clusterList = await findClusters(project, zone);
       clusterList = filterLabels(clusterList, labels);
       console.log(`Found ${clusterList.length} cluster(s) in zone ${zone}`);
       clusters = clusters.concat(clusterList);
     }
     return clusters;
   }
+};
+
+const findClusters = async (project, location = "-") => {
+  const [{ clusters }] = await clusterClient.listClusters({
+    parent: `projects/${project}/locations/${location}`,
+  });
+  return clusters.filter((cluster) => {
+    const isAutopilot = !!cluster.autopilot?.enabled;
+    if (isAutopilot) {
+      console.log(`Skipping autopilot cluster ${cluster.name}`);
+    }
+    return !isAutopilot;
+  });
 };
 
 const filterLabels = (clusters, labels) => {
