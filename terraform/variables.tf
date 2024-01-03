@@ -88,7 +88,7 @@ variable "topic_message_retention_duration" {
   default     = null
 }
 
-variable "start_compute_function" {
+variable "start_stop_gce_function" {
   type = object({
     enabled               = bool
     service_account_email = optional(string)
@@ -96,27 +96,13 @@ variable "start_compute_function" {
     available_memory      = optional(string)
     max_instance_count    = optional(number)
   })
-  description = "The start Compute instances function settings."
+  description = "The start Compute Engine instances function settings."
   default = {
     enabled = false
   }
 }
 
-variable "stop_compute_function" {
-  type = object({
-    enabled               = bool
-    service_account_email = optional(string)
-    timeout               = optional(number)
-    available_memory      = optional(string)
-    max_instance_count    = optional(number)
-  })
-  description = "The stop Compute instances function settings."
-  default = {
-    enabled = false
-  }
-}
-
-variable "start_sql_function" {
+variable "start_stop_sql_function" {
   type = object({
     enabled               = bool
     service_account_email = optional(string)
@@ -130,21 +116,7 @@ variable "start_sql_function" {
   }
 }
 
-variable "stop_sql_function" {
-  type = object({
-    enabled               = bool
-    service_account_email = optional(string)
-    timeout               = optional(number)
-    available_memory      = optional(string)
-    max_instance_count    = optional(number)
-  })
-  description = "The stop SQL instance function settings."
-  default = {
-    enabled = false
-  }
-}
-
-variable "start_gke_function" {
+variable "start_stop_gke_function" {
   type = object({
     enabled               = bool
     service_account_email = optional(string)
@@ -155,22 +127,6 @@ variable "start_gke_function" {
     shutdown_taint_value  = optional(string)
   })
   description = "The start GKE function settings."
-  default = {
-    enabled = false
-  }
-}
-
-variable "stop_gke_function" {
-  type = object({
-    enabled               = bool
-    service_account_email = optional(string)
-    timeout               = optional(number)
-    available_memory      = optional(string)
-    max_instance_count    = optional(number)
-    shutdown_taint_key    = optional(string)
-    shutdown_taint_value  = optional(string)
-  })
-  description = "The stop GKE function settings."
   default = {
     enabled = false
   }

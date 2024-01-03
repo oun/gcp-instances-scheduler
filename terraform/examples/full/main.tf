@@ -47,27 +47,15 @@ module "start_stop_scheduler" {
     project = var.scheduled_project_id
   }
 
-  start_compute_function = {
+  start_stop_gce_function = {
     enabled               = true
     service_account_email = google_service_account.gce_function.email
   }
-  stop_compute_function = {
-    enabled               = true
-    service_account_email = google_service_account.gce_function.email
-  }
-  start_sql_function = {
+  start_stop_sql_function = {
     enabled               = true
     service_account_email = google_service_account.sql_function.email
   }
-  stop_sql_function = {
-    enabled               = true
-    service_account_email = google_service_account.sql_function.email
-  }
-  start_gke_function = {
-    enabled               = true
-    service_account_email = google_service_account.gke_function.email
-  }
-  stop_gke_function = {
+  start_stop_gke_function = {
     enabled               = true
     service_account_email = google_service_account.gke_function.email
   }

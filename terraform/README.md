@@ -69,12 +69,9 @@ Then perform the following commands:
 | topic_labels                     | A map of labels to assign to the Pub/Sub topic.           | `map(string)` | {}                     |    no    |
 | topic_kms_key_name               | The resource name of the Cloud KMS CryptoKey.             | `string`      | n/a                    |    no    |
 | topic_message_retention_duration | The minimum duration in seconds to retain a message.      | `string`      | n/a                    |    no    |
-| start_compute_function           | The settings for start compute instances function.        | `object`      | n/a                    |    no    |
-| stop_compute_function            | The settings for stop compute instances function.         | `object`      | n/a                    |    no    |
-| start_sql_function               | The settings for start SQL instances function.            | `object`      | n/a                    |    no    |
-| stop_sql_function                | The settings for stop SQL instances function.             | `object`      | n/a                    |    no    |
-| start_gke_function               | The settings for start GKE node pools function.           | `object`      | n/a                    |    no    |
-| stop_gke_function                | The settings for stop GKE node pools function.            | `object`      | n/a                    |    no    |
+| start_stop_gce_function           | The settings for start/stop compute instances function.        | `object`      | n/a                    |    no    |
+| start_stop_sql_function               | The settings for start/stop SQL instances function.            | `object`      | n/a                    |    no    |
+| start_stop_gke_function               | The settings for start/stop GKE node pools function.           | `object`      | n/a                    |    no    |
 | function_labels                  | A set of key/value label pairs to assign to the function. | `map(string)` | {}                     |    no    |
 
 The `scheduled_resource_filter` block:
