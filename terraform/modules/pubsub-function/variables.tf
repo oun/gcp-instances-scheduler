@@ -92,3 +92,9 @@ variable "function_labels" {
   default     = {}
   description = "A set of key/value label pairs to assign to the function."
 }
+
+variable "trigger_service_account_email" {
+  type        = string
+  default     = null
+  description = "Service account to use as the identity for the Eventarc trigger."
+}

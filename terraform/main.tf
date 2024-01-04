@@ -59,75 +59,79 @@ resource "google_storage_bucket" "default" {
 }
 
 module "function_start_gce_instances" {
-  count                 = lookup(var.start_stop_gce_function, "enabled", false) ? 1 : 0
-  source                = "./modules/pubsub-function"
-  name                  = "start-gce-instances"
-  project_id            = var.project_id
-  description           = "Function for starting Compute Engine instances"
-  bucket_name           = google_storage_bucket.default.name
-  source_dir            = "${path.module}/../functions/gce"
-  location              = var.region
-  entry_point           = "startInstances"
-  pubsub_topic          = google_pubsub_topic.start_topic.id
-  service_account_email = var.start_stop_gce_function.service_account_email
-  timeout               = var.start_stop_gce_function.timeout
-  available_memory      = var.start_stop_gce_function.available_memory
-  max_instance_count    = var.start_stop_gce_function.max_instance_count
-  function_labels       = var.function_labels
+  count                         = lookup(var.start_stop_gce_function, "enabled", false) ? 1 : 0
+  source                        = "./modules/pubsub-function"
+  name                          = "start-gce-instances"
+  project_id                    = var.project_id
+  description                   = "Function for starting Compute Engine instances"
+  bucket_name                   = google_storage_bucket.default.name
+  source_dir                    = "${path.module}/../functions/gce"
+  location                      = var.region
+  entry_point                   = "startInstances"
+  pubsub_topic                  = google_pubsub_topic.start_topic.id
+  service_account_email         = var.start_stop_gce_function.service_account_email
+  timeout                       = var.start_stop_gce_function.timeout
+  available_memory              = var.start_stop_gce_function.available_memory
+  max_instance_count            = var.start_stop_gce_function.max_instance_count
+  function_labels               = var.function_labels
+  trigger_service_account_email = var.trigger_service_account_email
 }
 
 module "function_stop_gce_instances" {
-  count                 = lookup(var.start_stop_gce_function, "enabled", false) ? 1 : 0
-  source                = "./modules/pubsub-function"
-  name                  = "stop-gce-instances"
-  project_id            = var.project_id
-  description           = "Function for stopping Compute Engine instances"
-  bucket_name           = google_storage_bucket.default.name
-  source_dir            = "${path.module}/../functions/gce"
-  location              = var.region
-  entry_point           = "stopInstances"
-  pubsub_topic          = google_pubsub_topic.stop_topic.id
-  service_account_email = var.start_stop_gce_function.service_account_email
-  timeout               = var.start_stop_gce_function.timeout
-  available_memory      = var.start_stop_gce_function.available_memory
-  max_instance_count    = var.start_stop_gce_function.max_instance_count
-  function_labels       = var.function_labels
+  count                         = lookup(var.start_stop_gce_function, "enabled", false) ? 1 : 0
+  source                        = "./modules/pubsub-function"
+  name                          = "stop-gce-instances"
+  project_id                    = var.project_id
+  description                   = "Function for stopping Compute Engine instances"
+  bucket_name                   = google_storage_bucket.default.name
+  source_dir                    = "${path.module}/../functions/gce"
+  location                      = var.region
+  entry_point                   = "stopInstances"
+  pubsub_topic                  = google_pubsub_topic.stop_topic.id
+  service_account_email         = var.start_stop_gce_function.service_account_email
+  timeout                       = var.start_stop_gce_function.timeout
+  available_memory              = var.start_stop_gce_function.available_memory
+  max_instance_count            = var.start_stop_gce_function.max_instance_count
+  function_labels               = var.function_labels
+  trigger_service_account_email = var.trigger_service_account_email
 }
 
 module "function_start_sql_instances" {
-  count                 = lookup(var.start_stop_sql_function, "enabled", false) ? 1 : 0
-  source                = "./modules/pubsub-function"
-  name                  = "start-sql-instances"
-  project_id            = var.project_id
-  description           = "Function for starting Cloud SQL instances"
-  bucket_name           = google_storage_bucket.default.name
-  source_dir            = "${path.module}/../functions/sql"
-  location              = var.region
-  entry_point           = "startInstances"
-  pubsub_topic          = google_pubsub_topic.start_topic.id
-  service_account_email = var.start_stop_sql_function.service_account_email
-  timeout               = var.start_stop_sql_function.timeout
-  available_memory      = var.start_stop_sql_function.available_memory
-  max_instance_count    = var.start_stop_sql_function.max_instance_count
-  function_labels       = var.function_labels
+  count                         = lookup(var.start_stop_sql_function, "enabled", false) ? 1 : 0
+  source                        = "./modules/pubsub-function"
+  name                          = "start-sql-instances"
+  project_id                    = var.project_id
+  description                   = "Function for starting Cloud SQL instances"
+  bucket_name                   = google_storage_bucket.default.name
+  source_dir                    = "${path.module}/../functions/sql"
+  location                      = var.region
+  entry_point                   = "startInstances"
+  pubsub_topic                  = google_pubsub_topic.start_topic.id
+  service_account_email         = var.start_stop_sql_function.service_account_email
+  timeout                       = var.start_stop_sql_function.timeout
+  available_memory              = var.start_stop_sql_function.available_memory
+  max_instance_count            = var.start_stop_sql_function.max_instance_count
+  function_labels               = var.function_labels
+  trigger_service_account_email = var.trigger_service_account_email
 }
 
 module "function_stop_sql_instances" {
-  count                 = lookup(var.start_stop_sql_function, "enabled", false) ? 1 : 0
-  source                = "./modules/pubsub-function"
-  name                  = "stop-sql-instances"
-  project_id            = var.project_id
-  description           = "Function for stopping Cloud SQL instances"
-  bucket_name           = google_storage_bucket.default.name
-  source_dir            = "${path.module}/../functions/sql"
-  location              = var.region
-  entry_point           = "stopInstances"
-  pubsub_topic          = google_pubsub_topic.stop_topic.id
-  service_account_email = var.start_stop_sql_function.service_account_email
-  timeout               = var.start_stop_sql_function.timeout
-  available_memory      = var.start_stop_sql_function.available_memory
-  max_instance_count    = var.start_stop_sql_function.max_instance_count
-  function_labels       = var.function_labels
+  count                         = lookup(var.start_stop_sql_function, "enabled", false) ? 1 : 0
+  source                        = "./modules/pubsub-function"
+  name                          = "stop-sql-instances"
+  project_id                    = var.project_id
+  description                   = "Function for stopping Cloud SQL instances"
+  bucket_name                   = google_storage_bucket.default.name
+  source_dir                    = "${path.module}/../functions/sql"
+  location                      = var.region
+  entry_point                   = "stopInstances"
+  pubsub_topic                  = google_pubsub_topic.stop_topic.id
+  service_account_email         = var.start_stop_sql_function.service_account_email
+  timeout                       = var.start_stop_sql_function.timeout
+  available_memory              = var.start_stop_sql_function.available_memory
+  max_instance_count            = var.start_stop_sql_function.max_instance_count
+  function_labels               = var.function_labels
+  trigger_service_account_email = var.trigger_service_account_email
 }
 
 module "function_start_gke_node_pools" {
@@ -149,7 +153,8 @@ module "function_start_gke_node_pools" {
     SHUTDOWN_TAINT_KEY   = var.start_stop_gke_function.shutdown_taint_key
     SHUTDOWN_TAINT_VALUE = var.start_stop_gke_function.shutdown_taint_value
   }
-  function_labels = var.function_labels
+  function_labels               = var.function_labels
+  trigger_service_account_email = var.trigger_service_account_email
 }
 
 module "function_stop_gke_node_pools" {
@@ -171,5 +176,6 @@ module "function_stop_gke_node_pools" {
     SHUTDOWN_TAINT_KEY   = var.start_stop_gke_function.shutdown_taint_key
     SHUTDOWN_TAINT_VALUE = var.start_stop_gke_function.shutdown_taint_value
   }
-  function_labels = var.function_labels
+  function_labels               = var.function_labels
+  trigger_service_account_email = var.trigger_service_account_email
 }
