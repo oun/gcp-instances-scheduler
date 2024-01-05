@@ -88,54 +88,61 @@ variable "topic_message_retention_duration" {
   default     = null
 }
 
-variable "start_stop_gce_function" {
+variable "gce_function_config" {
   type = object({
-    enabled               = bool
-    service_account_email = optional(string)
-    timeout               = optional(number)
-    available_memory      = optional(string)
-    max_instance_count    = optional(number)
+    enabled                = optional(bool, false)
+    create_service_account = optional(bool, true)
+    service_account_id     = optional(string, "sa-start-stop-gce-function")
+    service_account_email  = optional(string)
+    timeout                = optional(number)
+    available_memory       = optional(string)
+    max_instance_count     = optional(number)
   })
-  description = "The start Compute Engine instances function settings."
-  default = {
-    enabled = false
-  }
+  description = "The start and stop Compute Engine instances function settings."
 }
 
-variable "start_stop_sql_function" {
+variable "sql_function_config" {
   type = object({
-    enabled               = bool
-    service_account_email = optional(string)
-    timeout               = optional(number)
-    available_memory      = optional(string)
-    max_instance_count    = optional(number)
+    enabled                = optional(bool, false)
+    create_service_account = optional(bool, true)
+    service_account_id     = optional(string, "sa-start-stop-sql-function")
+    service_account_email  = optional(string)
+    timeout                = optional(number)
+    available_memory       = optional(string)
+    max_instance_count     = optional(number)
   })
-  description = "The start SQL instance function settings."
-  default = {
-    enabled = false
-  }
+  description = "The start and stop SQL instance function settings."
 }
 
-variable "start_stop_gke_function" {
+variable "gke_function_config" {
   type = object({
-    enabled               = bool
-    service_account_email = optional(string)
-    timeout               = optional(number)
-    available_memory      = optional(string)
-    max_instance_count    = optional(number)
-    shutdown_taint_key    = optional(string)
-    shutdown_taint_value  = optional(string)
+    enabled                = optional(bool, false)
+    create_service_account = optional(bool, true)
+    service_account_id     = optional(string, "sa-start-stop-gke-function")
+    service_account_email  = optional(string)
+    timeout                = optional(number)
+    available_memory       = optional(string)
+    max_instance_count     = optional(number)
+    shutdown_taint_key     = optional(string)
+    shutdown_taint_value   = optional(string)
   })
-  description = "The start GKE function settings."
-  default = {
-    enabled = false
-  }
+  description = "The start and stop GKE function settings."
 }
 
 variable "function_labels" {
   type        = map(string)
   default     = {}
   description = "A set of key/value label pairs to assign to the function."
+}
+
+variable "create_trigger_service_account" {
+  type    = bool
+  default = true
+}
+
+variable "trigger_service_account_id" {
+  type    = string
+  default = "sa-start-stop-trigger"
 }
 
 variable "trigger_service_account_email" {

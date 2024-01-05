@@ -18,18 +18,6 @@ This includes the following Google Components:
 There is a Terraform module that you can use to provision Cloud scheduler, Pubsub topics and cloud functions. Example can be seen in [`terraform/examples`](./terraform/examples/) directory.
 
 ```
-resource "google_service_account" "gce_function" {
-  account_id   = "start-stop-gce-function"
-  project      = "scheduler-project-id"
-  display_name = "Cloud Function Service Account"
-}
-
-resource "google_project_iam_member" "gce_function" {
-  project = "gce-instance-project-id"
-  role    = "roles/compute.instanceAdmin.v1"
-  member  = google_service_account.gce_function.member
-}
-
 module "start_stop_scheduler" {
   source             = "github.com/oun/gcp-instances-scheduler.git//terraform"
   project_id         = "scheduler-project-id"
@@ -37,17 +25,19 @@ module "start_stop_scheduler" {
   start_job_schedule = "0 8 * * 1-5"
   stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
+
   scheduled_resource_filter = {
     project = "gce-instance-project-id"
   }
 
-  start_compute_function = {
-    enabled               = true
-    service_account_email = google_service_account.gce_function.email
+  gce_function_config = {
+    enabled = true
   }
-  stop_compute_function = {
-    enabled               = true
-    service_account_email = google_service_account.gce_function.email
+  sql_function_config = {
+    enabled = true
+  }
+  gke_function_config = {
+    enabled = true
   }
 }
 ```
