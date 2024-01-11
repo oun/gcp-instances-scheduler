@@ -47,4 +47,8 @@ resource "google_cloudfunctions2_function" "default" {
   }
 
   labels = var.function_labels
+
+  lifecycle {
+    ignore_changes = [build_config[0].docker_repository]
+  }
 }
