@@ -90,7 +90,7 @@ variable "topic_message_retention_duration" {
 
 variable "gce_function_config" {
   type = object({
-    enabled                = optional(bool, false)
+    enabled                = optional(bool, true)
     create_service_account = optional(bool, true)
     service_account_id     = optional(string, "sa-start-stop-gce-function")
     service_account_email  = optional(string)
@@ -98,12 +98,15 @@ variable "gce_function_config" {
     available_memory       = optional(string)
     max_instance_count     = optional(number)
   })
+  default = {
+    enabled = false
+  }
   description = "The start and stop Compute Engine instances function settings."
 }
 
 variable "sql_function_config" {
   type = object({
-    enabled                = optional(bool, false)
+    enabled                = optional(bool, true)
     create_service_account = optional(bool, true)
     service_account_id     = optional(string, "sa-start-stop-sql-function")
     service_account_email  = optional(string)
@@ -111,12 +114,15 @@ variable "sql_function_config" {
     available_memory       = optional(string)
     max_instance_count     = optional(number)
   })
+  default = {
+    enabled = false
+  }
   description = "The start and stop SQL instance function settings."
 }
 
 variable "gke_function_config" {
   type = object({
-    enabled                = optional(bool, false)
+    enabled                = optional(bool, true)
     create_service_account = optional(bool, true)
     service_account_id     = optional(string, "sa-start-stop-gke-function")
     service_account_email  = optional(string)
@@ -126,6 +132,9 @@ variable "gke_function_config" {
     shutdown_taint_key     = optional(string)
     shutdown_taint_value   = optional(string)
   })
+  default = {
+    enabled = false
+  }
   description = "The start and stop GKE function settings."
 }
 
