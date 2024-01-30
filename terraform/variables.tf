@@ -12,8 +12,8 @@ variable "schedules" {
   type = list(object({
     start_schedule        = string
     stop_schedule         = string
-    start_job_name        = optional(string)
-    stop_job_name         = optional(string)
+    start_job_name        = string
+    stop_job_name         = string
     start_job_description = optional(string)
     stop_job_description  = optional(string)
     project               = string
@@ -70,7 +70,7 @@ variable "gce_function_config" {
   default = {
     enabled = false
   }
-  description = "The start and stop Compute Engine instances function settings."
+  description = "The settings for start and stop Compute instances function."
 }
 
 variable "sql_function_config" {
@@ -86,7 +86,7 @@ variable "sql_function_config" {
   default = {
     enabled = false
   }
-  description = "The start and stop SQL instance function settings."
+  description = "The settings for start and stop SQL instance function."
 }
 
 variable "gke_function_config" {
@@ -104,7 +104,7 @@ variable "gke_function_config" {
   default = {
     enabled = false
   }
-  description = "The start and stop GKE function settings."
+  description = "The settings for start and stop GKE function."
 }
 
 variable "function_labels" {
@@ -114,13 +114,15 @@ variable "function_labels" {
 }
 
 variable "create_trigger_service_account" {
-  type    = bool
-  default = true
+  type        = bool
+  description = "If the service account to trigger function should be created."
+  default     = true
 }
 
 variable "trigger_service_account_id" {
-  type    = string
-  default = "sa-start-stop-trigger"
+  type        = string
+  description = "The name of the service account that will be created if create_trigger_service_account is true."
+  default     = "sa-start-stop-trigger"
 }
 
 variable "trigger_service_account_email" {

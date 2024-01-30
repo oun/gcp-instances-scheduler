@@ -22,14 +22,18 @@ module "start_stop_scheduler" {
   source             = "github.com/oun/gcp-instances-scheduler.git//terraform"
   project_id         = "scheduler-project-id"
   region             = "asia-southeast1"
-  start_job_schedule = "0 8 * * 1-5"
-  stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
 
-  scheduled_resource_filter = {
-    project = "gce-instance-project-id"
-  }
-
+  schedules = [
+    {
+      start_job_name = "start-instances"
+      stop_job_name  = "stop-instances"
+      start_schedule = "0 8 * * 1-5"
+      stop_schedule  = "0 20 * * 1-5"
+      project        = "resource-project-id"
+    }
+  ]
+  
   gce_function_config = {
     enabled = true
   }

@@ -11,15 +11,17 @@ module "start_stop_scheduler" {
   source             = "github.com/oun/gcp-instances-scheduler.git//terraform"
   project_id         = "scheduler-project-id"
   region             = "asia-southeast1"
-  start_topic        = "start-instance-event"
-  stop_topic         = "stop-instance-event"
-  start_job_schedule = "0 8 * * 1-5"
-  stop_job_schedule  = "0 20 * * 1-5"
   time_zone          = "Asia/Bangkok"
 
-  scheduled_resource_filter = {
-    project = "gce-instance-project-id"
-  }
+  schedules = [
+    {
+      start_job_name = "start-instances"
+      stop_job_name  = "stop-instances"
+      start_schedule = "0 8 * * 1-5"
+      stop_schedule  = "0 20 * * 1-5"
+      project        = "resource-project-id"
+    }
+  ]
 
   gce_function_config = {
     enabled = true
@@ -40,39 +42,29 @@ Then perform the following commands:
 - `terraform apply` to apply the infrastructure build.
 - `terraform destroy` to destroy the built infrastructure.
 
+<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
-| Name                             | Description                                                                                     | Type          | Default                 | Required |
-| -------------------------------- | ----------------------------------------------------------------------------------------------- | ------------- | ----------------------- | :------: |
-| project_id                       | The project ID to host resources.                                                               | `string`      | n/a                     |   yes    |
-| region                           | The region to host resources.                                                                   | `string`      | n/a                     |   yes    |
-| start_job_name                   | The name of scheduler that trigger start event.                                                 | `string`      | `start-instances`       |   yes    |
-| start_job_description            | The additional text to describe the job.                                                        | `string`      | ``                      |    no    |
-| start_job_schedule               | The job frequency in cron syntax.                                                               | `string`      | n/a                     |   yes    |
-| stop_job_name                    | The name of scheduler that trigger stop event.                                                  | `string`      | `stop-instances`        |    no    |
-| stop_job_description             | The additional text to describe the job.                                                        | `string`      | ``                      |   yes    |
-| stop_job_schedule                | The job frequency in cron syntax.                                                               | `string`      | n/a                     |    no    |
-| scheduled_resource_filter        | The filter that filter resources for scheduling.                                                | `object`      | `{}`                    |    no    |
-| timezone                         | The timezone to use in scheduler.                                                               | `string`      | `Etc/UTC`               |    no    |
-| start_topic                      | The Pub/Sub topic name for start event.                                                         | `string`      | `start-instance-event`  |    no    |
-| stop_topic                       | The Pub/Sub topic name for stop event.                                                          | `string`      | `stop-instance-event`   |    no    |
-| topic_labels                     | A map of labels to assign to the Pub/Sub topic.                                                 | `map(string)` | `{}`                    |    no    |
-| topic_kms_key_name               | The resource name of the Cloud KMS CryptoKey.                                                   | `string`      | n/a                     |    no    |
-| topic_message_retention_duration | The minimum duration in seconds to retain a message.                                            | `string`      | n/a                     |    no    |
-| gce_function_config              | The settings for start/stop compute instances function.                                         | `object`      | `{"enabled": false}`    |    no    |
-| sql_function_config              | The settings for start/stop SQL instances function.                                             | `object`      | `{"enabled": false}`    |    no    |
-| gke_function_config              | The settings for start/stop GKE node pools function.                                            | `object`      | `{"enabled": false}`    |    no    |
-| function_labels                  | A set of key/value label pairs to assign to the function.                                       | `map(string)` | `{}`                    |    no    |
-| create_trigger_service_account   | If the service account to trigger function should be created.                                   | `bool`        | `true`                  |    no    |
-| trigger_service_account_id       | The name of the service account that will be created if create_trigger_service_account is true. | `string`      | `sa-start-stop-trigger` |    no    |
-| trigger_service_account_email    | The existing service account to trigger functions.                                              | `string`      | n/a                     |    no    |
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_create_trigger_service_account"></a> [create\_trigger\_service\_account](#input\_create\_trigger\_service\_account) | If the service account to trigger function should be created. | `bool` | `true` | no |
+| <a name="input_function_labels"></a> [function\_labels](#input\_function\_labels) | A set of key/value label pairs to assign to the function. | `map(string)` | `{}` | no |
+| <a name="input_gce_function_config"></a> [gce\_function\_config](#input\_gce\_function\_config) | The settings for start and stop Compute instances function. | <pre>object({<br>    enabled                = optional(bool, true)<br>    create_service_account = optional(bool, true)<br>    service_account_id     = optional(string, "sa-start-stop-gce-function")<br>    service_account_email  = optional(string)<br>    timeout                = optional(number)<br>    available_memory       = optional(string)<br>    max_instance_count     = optional(number)<br>  })</pre> | <pre>{<br>  "enabled": false<br>}</pre> | no |
+| <a name="input_gke_function_config"></a> [gke\_function\_config](#input\_gke\_function\_config) | The settings for start and stop GKE function. | <pre>object({<br>    enabled                = optional(bool, true)<br>    create_service_account = optional(bool, true)<br>    service_account_id     = optional(string, "sa-start-stop-gke-function")<br>    service_account_email  = optional(string)<br>    timeout                = optional(number)<br>    available_memory       = optional(string)<br>    max_instance_count     = optional(number)<br>    shutdown_taint_key     = optional(string)<br>    shutdown_taint_value   = optional(string)<br>  })</pre> | <pre>{<br>  "enabled": false<br>}</pre> | no |
+| <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The project where resources will be created. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The region in which resources will be applied. | `string` | n/a | yes |
+| <a name="input_schedules"></a> [schedules](#input\_schedules) | n/a | <pre>list(object({<br>    start_schedule        = string<br>    stop_schedule         = string<br>    start_job_name        = string<br>    stop_job_name         = string<br>    start_job_description = optional(string)<br>    stop_job_description  = optional(string)<br>    project               = string<br>    resource_labels       = optional(map(string))<br>  }))</pre> | n/a | yes |
+| <a name="input_sql_function_config"></a> [sql\_function\_config](#input\_sql\_function\_config) | The settings for start and stop SQL instance function. | <pre>object({<br>    enabled                = optional(bool, true)<br>    create_service_account = optional(bool, true)<br>    service_account_id     = optional(string, "sa-start-stop-sql-function")<br>    service_account_email  = optional(string)<br>    timeout                = optional(number)<br>    available_memory       = optional(string)<br>    max_instance_count     = optional(number)<br>  })</pre> | <pre>{<br>  "enabled": false<br>}</pre> | no |
+| <a name="input_start_topic"></a> [start\_topic](#input\_start\_topic) | The Pub/Sub topic name for start event. | `string` | `"start-instance-event"` | no |
+| <a name="input_stop_topic"></a> [stop\_topic](#input\_stop\_topic) | The Pub/Sub topic name for stop event. | `string` | `"stop-instance-event"` | no |
+| <a name="input_time_zone"></a> [time\_zone](#input\_time\_zone) | The timezone to use in scheduler | `string` | `"Etc/UTC"` | no |
+| <a name="input_topic_kms_key_name"></a> [topic\_kms\_key\_name](#input\_topic\_kms\_key\_name) | The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic. | `string` | `null` | no |
+| <a name="input_topic_labels"></a> [topic\_labels](#input\_topic\_labels) | A map of labels to assign to the Pub/Sub topic. | `map(string)` | `{}` | no |
+| <a name="input_topic_message_retention_duration"></a> [topic\_message\_retention\_duration](#input\_topic\_message\_retention\_duration) | The minimum duration in seconds to retain a message after it is published to the topic. | `string` | `null` | no |
+| <a name="input_trigger_service_account_email"></a> [trigger\_service\_account\_email](#input\_trigger\_service\_account\_email) | Service account to use as the identity for the Eventarc trigger. | `string` | `null` | no |
+| <a name="input_trigger_service_account_id"></a> [trigger\_service\_account\_id](#input\_trigger\_service\_account\_id) | The name of the service account that will be created if create\_trigger\_service\_account is true. | `string` | `"sa-start-stop-trigger"` | no |
 
-The `scheduled_resource_filter` block:
-
-| Name    | Description                       | Type          | Default      | Required |
-| ------- | --------------------------------- | ------------- | ------------ | :------: |
-| project | The project ID to host resources. | `string`      | `project_id` |    no    |
-| labels  | The resource labels.              | `map(string)` | n/a          |    no    |
+<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 The `cloud function` settings block:
 
@@ -85,6 +77,19 @@ The `cloud function` settings block:
 | timeout                | The amount of time in seconds allotted for the execution of the function.                                                  | `number` | `540`   |    no    |
 | available_memory       | The amount of memory allotted for the function to use.                                                                     | `string` | `256M`  |    no    |
 | max_instance_count     | The limit on the maximum number of function instances that may coexist at a given time.                                    | `number` | `1`     |    no    |
+
+The `schedules` block:
+
+| Name                   | Description                                              | Type     | Default | Required |
+| ---------------------- | -------------------------------------------------------- | -------- | ------- | :------: |
+| start_schedule         | The start job frequency in cron syntax.                  | `string` | n/a     | yes      |
+| stop_schedule          | The stop job frequency in cron syntax.                   | `string` | n/a     | yes      |
+| start_job_name         | The name of scheduler that trigger start event.          | `string` | n/a     | yes      |
+| stop_job_name          | The name of scheduler that trigger stop event.           | `string` | n/a     | yes      |
+| start_job_description  | The additional text to describe the start job.           | `string` | n/a     | no       |
+| stop_job_description   | The additional text to describe the stop job.            | `string` | n/a     | no       |
+| project                | The project that host resources.                         | `string` | n/a     | yes      |
+| resource_labels        | The optionall resource labels.                           | `map(string)` | n/a     | no       |
 
 ## Requirements
 

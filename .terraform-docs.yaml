@@ -4,17 +4,11 @@ sections:
   show:
     - inputs
     - outputs
-    - providers
-    - requirements
 
 content: |-
   {{ .Inputs }}
 
   {{ .Outputs }}
-
-  {{ .Providers }}
-
-  {{ .Requirements }}
 
 settings:
   hide-empty: true
