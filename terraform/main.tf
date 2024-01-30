@@ -1,6 +1,6 @@
 locals {
-  scheduled_project = coalesce(var.scheduled_resource_filter.project, var.project_id)
-  pubsub_message    = jsonencode({ project = local.scheduled_project, labels = var.scheduled_resource_filter.labels })
+  scheduled_projects = [for schedule in var.schedules : schedule.project]
+  pubsub_messages    = [for index, schedule in var.schedules : jsonencode({ project = local.scheduled_projects[index], labels = schedule.resource_labels })]
 
   trigger_sa_email      = var.create_trigger_service_account ? google_service_account.trigger_sa[0].email : var.trigger_service_account_email
   gce_function_sa_email = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? google_service_account.gce_function_sa[0].email : var.gce_function_config.service_account_email
@@ -9,30 +9,34 @@ locals {
 }
 
 resource "google_cloud_scheduler_job" "start_job" {
-  name        = var.start_job_name
-  description = var.start_job_description
+  count = length(var.schedules)
+
+  name        = try(var.schedules[count.index].start_job_name, "start-instances-${count.index}")
+  description = try(var.schedules[count.index].start_job_description, "")
   project     = var.project_id
   region      = var.region
-  schedule    = var.start_job_schedule
+  schedule    = var.schedules[count.index].start_schedule
   time_zone   = var.time_zone
 
   pubsub_target {
     topic_name = google_pubsub_topic.start_topic.id
-    data       = base64encode(local.pubsub_message)
+    data       = base64encode(local.pubsub_messages[count.index])
   }
 }
 
 resource "google_cloud_scheduler_job" "stop_job" {
-  name        = var.stop_job_name
-  description = var.stop_job_description
+  count = length(var.schedules)
+
+  name        = try(var.schedules[count.index].stop_job_name, "stop-instances-${count.index}")
+  description = try(var.schedules[count.index].stop_job_description, "")
   project     = var.project_id
   region      = var.region
-  schedule    = var.stop_job_schedule
+  schedule    = var.schedules[count.index].stop_schedule
   time_zone   = var.time_zone
 
   pubsub_target {
     topic_name = google_pubsub_topic.stop_topic.id
-    data       = base64encode(local.pubsub_message)
+    data       = base64encode(local.pubsub_messages[count.index])
   }
 }
 
@@ -156,25 +160,25 @@ resource "google_cloud_run_service_iam_member" "stop_gke_function" {
 }
 
 resource "google_project_iam_member" "gce_function" {
-  count = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? 1 : 0
+  for_each = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? toset(local.scheduled_projects) : []
 
-  project = local.scheduled_project
+  project = each.value
   role    = "roles/compute.instanceAdmin.v1"
   member  = google_service_account.gce_function_sa[0].member
 }
 
 resource "google_project_iam_member" "sql_function" {
-  count = var.sql_function_config.enabled && var.sql_function_config.create_service_account ? 1 : 0
+  for_each = var.sql_function_config.enabled && var.sql_function_config.create_service_account ? toset(local.scheduled_projects) : []
 
-  project = local.scheduled_project
+  project = each.value
   role    = "roles/cloudsql.editor"
   member  = google_service_account.sql_function_sa[0].member
 }
 
 resource "google_project_iam_member" "gke_function" {
-  count = var.gke_function_config.enabled && var.gke_function_config.create_service_account ? 1 : 0
+  for_each = var.gke_function_config.enabled && var.gke_function_config.create_service_account ? toset(local.scheduled_projects) : []
 
-  project = local.scheduled_project
+  project = each.value
   role    = "roles/container.clusterAdmin"
   member  = google_service_account.gke_function_sa[0].member
 }

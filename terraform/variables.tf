@@ -8,38 +8,17 @@ variable "region" {
   description = "The region in which resources will be applied."
 }
 
-variable "start_job_name" {
-  type        = string
-  description = "The name of the scheduled job to run"
-  default     = "start-instances"
-}
-
-variable "start_job_description" {
-  type        = string
-  description = "Addition text to describe the job"
-  default     = ""
-}
-
-variable "start_job_schedule" {
-  type        = string
-  description = "The job frequency, in cron syntax"
-}
-
-variable "stop_job_name" {
-  type        = string
-  description = "The name of the scheduled job to run"
-  default     = "stop-instances"
-}
-
-variable "stop_job_description" {
-  type        = string
-  description = "Addition text to describe the job"
-  default     = ""
-}
-
-variable "stop_job_schedule" {
-  type        = string
-  description = "The job frequency, in cron syntax"
+variable "schedules" {
+  type = list(object({
+    start_schedule        = string
+    stop_schedule         = string
+    start_job_name        = optional(string)
+    stop_job_name         = optional(string)
+    start_job_description = optional(string)
+    stop_job_description  = optional(string)
+    project               = string
+    resource_labels       = optional(map(string))
+  }))
 }
 
 variable "time_zone" {
@@ -64,16 +43,6 @@ variable "topic_labels" {
   type        = map(string)
   description = "A map of labels to assign to the Pub/Sub topic."
   default     = {}
-}
-
-variable "scheduled_resource_filter" {
-  type = object({
-    project = optional(string)
-    labels  = optional(map(string))
-  })
-  description = "The filter that filter resources for scheduling."
-  default = {
-  }
 }
 
 variable "topic_kms_key_name" {
