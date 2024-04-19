@@ -1,6 +1,7 @@
 locals {
   scheduled_projects = [for schedule in var.schedules : schedule.project]
   pubsub_messages    = [for index, schedule in var.schedules : jsonencode({ project = local.scheduled_projects[index], labels = schedule.resource_labels })]
+  pubsub_attributes  = [for index, schedule in var.schedules : { for type in schedule.resource_types : type => "true" }]
 
   trigger_sa_email      = var.create_trigger_service_account ? google_service_account.trigger_sa[0].email : var.trigger_service_account_email
   gce_function_sa_email = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? google_service_account.gce_function_sa[0].email : var.gce_function_config.service_account_email
@@ -21,6 +22,7 @@ resource "google_cloud_scheduler_job" "start_job" {
   pubsub_target {
     topic_name = google_pubsub_topic.start_topic.id
     data       = base64encode(local.pubsub_messages[count.index])
+    attributes = local.pubsub_attributes[count.index]
   }
 }
 
@@ -37,6 +39,7 @@ resource "google_cloud_scheduler_job" "stop_job" {
   pubsub_target {
     topic_name = google_pubsub_topic.stop_topic.id
     data       = base64encode(local.pubsub_messages[count.index])
+    attributes = local.pubsub_attributes[count.index]
   }
 }
 
@@ -200,6 +203,7 @@ module "function_start_gce_instances" {
   max_instance_count            = var.gce_function_config.max_instance_count
   function_labels               = var.function_labels
   trigger_service_account_email = local.trigger_sa_email
+  pubsub_filter                 = { attribute = "gce", value = "true" }
 }
 
 module "function_stop_gce_instances" {
@@ -219,6 +223,7 @@ module "function_stop_gce_instances" {
   max_instance_count            = var.gce_function_config.max_instance_count
   function_labels               = var.function_labels
   trigger_service_account_email = local.trigger_sa_email
+  pubsub_filter                 = { attribute = "gce", value = "true" }
 }
 
 module "function_start_sql_instances" {
@@ -238,6 +243,7 @@ module "function_start_sql_instances" {
   max_instance_count            = var.sql_function_config.max_instance_count
   function_labels               = var.function_labels
   trigger_service_account_email = local.trigger_sa_email
+  pubsub_filter                 = { attribute = "sql", value = "true" }
 }
 
 module "function_stop_sql_instances" {
@@ -257,6 +263,7 @@ module "function_stop_sql_instances" {
   max_instance_count            = var.sql_function_config.max_instance_count
   function_labels               = var.function_labels
   trigger_service_account_email = local.trigger_sa_email
+  pubsub_filter                 = { attribute = "sql", value = "true" }
 }
 
 module "function_start_gke_node_pools" {
@@ -280,6 +287,7 @@ module "function_start_gke_node_pools" {
   }
   function_labels               = var.function_labels
   trigger_service_account_email = local.trigger_sa_email
+  pubsub_filter                 = { attribute = "gke", value = "true" }
 }
 
 module "function_stop_gke_node_pools" {
@@ -303,4 +311,5 @@ module "function_stop_gke_node_pools" {
   }
   function_labels               = var.function_labels
   trigger_service_account_email = local.trigger_sa_email
+  pubsub_filter                 = { attribute = "gke", value = "true" }
 }

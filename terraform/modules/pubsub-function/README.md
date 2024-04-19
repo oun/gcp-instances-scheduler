@@ -17,6 +17,7 @@
 | <a name="input_min_instance_count"></a> [min\_instance\_count](#input\_min\_instance\_count) | The limit on the minimum number of function instances that may coexist at a given time. | `number` | `null` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the cloud function. | `string` | n/a | yes |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The project where resources will be created. | `string` | n/a | yes |
+| <a name="input_pubsub_filter"></a> [pubsub\_filter](#input\_pubsub\_filter) | PubSub subscription message filter. | <pre>object({<br>    attribute = string<br>    value     = string<br>  })</pre> | n/a | yes |
 | <a name="input_pubsub_topic"></a> [pubsub\_topic](#input\_pubsub\_topic) | The name of a Pub/Sub topic. | `string` | n/a | yes |
 | <a name="input_runtime"></a> [runtime](#input\_runtime) | The runtime in which the function will be executed. | `string` | `"nodejs18"` | no |
 | <a name="input_service_account_email"></a> [service\_account\_email](#input\_service\_account\_email) | The existing service account to run cloud function. | `string` | `""` | no |

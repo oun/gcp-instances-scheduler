@@ -17,6 +17,7 @@ variable "schedules" {
     start_job_description = optional(string)
     stop_job_description  = optional(string)
     project               = string
+    resource_types        = optional(list(string), ["gce", "sql", "gke"])
     resource_labels       = optional(map(string))
   }))
 }

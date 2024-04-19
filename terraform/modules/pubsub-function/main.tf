@@ -44,6 +44,10 @@ resource "google_cloudfunctions2_function" "default" {
     pubsub_topic          = var.pubsub_topic
     service_account_email = var.trigger_service_account_email
     retry_policy          = "RETRY_POLICY_DO_NOT_RETRY"
+    event_filters {
+      attribute = var.pubsub_filter.attribute
+      value     = var.pubsub_filter.value
+    }
   }
 
   labels = var.function_labels

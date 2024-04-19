@@ -98,3 +98,11 @@ variable "trigger_service_account_email" {
   default     = null
   description = "Service account to use as the identity for the Eventarc trigger."
 }
+
+variable "pubsub_filter" {
+  type = object({
+    attribute = string
+    value     = string
+  })
+  description = "PubSub subscription message filter."
+}

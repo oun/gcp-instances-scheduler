@@ -53,7 +53,7 @@ Then perform the following commands:
 | <a name="input_gke_function_config"></a> [gke\_function\_config](#input\_gke\_function\_config) | The settings for start and stop GKE function. | <pre>object({<br>    enabled                = optional(bool, true)<br>    create_service_account = optional(bool, true)<br>    service_account_id     = optional(string, "sa-start-stop-gke-function")<br>    service_account_email  = optional(string)<br>    timeout                = optional(number)<br>    available_memory       = optional(string)<br>    max_instance_count     = optional(number)<br>    shutdown_taint_key     = optional(string)<br>    shutdown_taint_value   = optional(string)<br>  })</pre> | <pre>{<br>  "enabled": false<br>}</pre> | no |
 | <a name="input_project_id"></a> [project\_id](#input\_project\_id) | The project where resources will be created. | `string` | n/a | yes |
 | <a name="input_region"></a> [region](#input\_region) | The region in which resources will be applied. | `string` | n/a | yes |
-| <a name="input_schedules"></a> [schedules](#input\_schedules) | n/a | <pre>list(object({<br>    start_schedule        = string<br>    stop_schedule         = string<br>    start_job_name        = string<br>    stop_job_name         = string<br>    start_job_description = optional(string)<br>    stop_job_description  = optional(string)<br>    project               = string<br>    resource_labels       = optional(map(string))<br>  }))</pre> | n/a | yes |
+| <a name="input_schedules"></a> [schedules](#input\_schedules) | n/a | <pre>list(object({<br>    start_schedule        = string<br>    stop_schedule         = string<br>    start_job_name        = string<br>    stop_job_name         = string<br>    start_job_description = optional(string)<br>    stop_job_description  = optional(string)<br>    project               = string<br>    resource_types        = optional(list(string), ["gce", "sql", "gke"])<br>    resource_labels       = optional(map(string))<br>  }))</pre> | n/a | yes |
 | <a name="input_sql_function_config"></a> [sql\_function\_config](#input\_sql\_function\_config) | The settings for start and stop SQL instance function. | <pre>object({<br>    enabled                = optional(bool, true)<br>    create_service_account = optional(bool, true)<br>    service_account_id     = optional(string, "sa-start-stop-sql-function")<br>    service_account_email  = optional(string)<br>    timeout                = optional(number)<br>    available_memory       = optional(string)<br>    max_instance_count     = optional(number)<br>  })</pre> | <pre>{<br>  "enabled": false<br>}</pre> | no |
 | <a name="input_start_topic"></a> [start\_topic](#input\_start\_topic) | The Pub/Sub topic name for start event. | `string` | `"start-instance-event"` | no |
 | <a name="input_stop_topic"></a> [stop\_topic](#input\_stop\_topic) | The Pub/Sub topic name for stop event. | `string` | `"stop-instance-event"` | no |
@@ -89,7 +89,8 @@ The `schedules` block:
 | start_job_description  | The additional text to describe the start job.           | `string` | n/a     | no       |
 | stop_job_description   | The additional text to describe the stop job.            | `string` | n/a     | no       |
 | project                | The project that host resources.                         | `string` | n/a     | yes      |
-| resource_labels        | The optionall resource labels.                           | `map(string)` | n/a     | no       |
+| resource_types         | The list of resource types. Default to all supported types. | `list(string)` | `["gce", "sql", "gke"]` | no      |
+| resource_labels        | The optional resource labels.                           | `map(string)` | n/a     | no       |
 
 ## Requirements
 
