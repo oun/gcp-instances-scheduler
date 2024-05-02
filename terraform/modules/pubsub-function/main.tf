@@ -38,21 +38,35 @@ resource "google_cloudfunctions2_function" "default" {
     environment_variables          = var.environment_variables
   }
 
-  event_trigger {
-    event_type            = "google.cloud.pubsub.topic.v1.messagePublished"
-    trigger_region        = var.location
-    pubsub_topic          = var.pubsub_topic
-    service_account_email = var.trigger_service_account_email
-    retry_policy          = "RETRY_POLICY_DO_NOT_RETRY"
-    event_filters {
-      attribute = var.pubsub_filter.attribute
-      value     = var.pubsub_filter.value
-    }
-  }
+  # event_trigger {
+  #   event_type            = "google.cloud.pubsub.topic.v1.messagePublished"
+  #   trigger_region        = var.location
+  #   pubsub_topic          = var.pubsub_topic
+  #   service_account_email = var.trigger_service_account_email
+  #   retry_policy          = "RETRY_POLICY_DO_NOT_RETRY"
+  #   event_filters {
+  #     attribute = var.pubsub_filter.attribute
+  #     value     = var.pubsub_filter.value
+  #   }
+  # }
 
   labels = var.function_labels
 
   lifecycle {
     ignore_changes = [build_config[0].docker_repository]
+  }
+}
+
+resource "google_pubsub_subscription" "default" {
+  name                 = "${var.name}-subscription"
+  topic                = var.pubsub_topic
+  ack_deadline_seconds = 600
+  filter               = "attributes.${var.pubsub_filter.attribute} = \"${var.pubsub_filter.value}\""
+
+  push_config {
+    push_endpoint = google_cloudfunctions2_function.default.url
+    oidc_token {
+      service_account_email = var.trigger_service_account_email
+    }
   }
 }
