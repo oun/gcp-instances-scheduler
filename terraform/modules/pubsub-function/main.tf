@@ -60,11 +60,12 @@ resource "google_cloudfunctions2_function" "default" {
 resource "google_pubsub_subscription" "default" {
   name                 = "${var.name}-subscription"
   topic                = var.pubsub_topic
+  project              = var.project_id
   ack_deadline_seconds = 600
   filter               = "attributes.${var.pubsub_filter.attribute} = \"${var.pubsub_filter.value}\""
 
   push_config {
-    push_endpoint = google_cloudfunctions2_function.default.url
+    push_endpoint = google_cloudfunctions2_function.default.service_config[0].uri
     oidc_token {
       service_account_email = var.trigger_service_account_email
     }
