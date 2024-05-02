@@ -4,7 +4,7 @@ This module setup Cloud Scheduler jobs to trigger Cloud Functions via pubsub top
 
 ## Usage
 
-The following simple example setup scheduler to schedule Compute instance in the project gce-instance-project-id to start at 8AM and stop at 8PM on Monday to Friday. There are example in [`terraform/examples`](./terraform/examples/) directory.
+The following simple example setup scheduler to schedule Compute instance in the project resource-project-id to start at 8AM and stop at 8PM on Monday to Friday. More examples in [`terraform/examples`](./terraform/examples/) directory.
 
 ```
 module "start_stop_scheduler" {
@@ -20,6 +20,7 @@ module "start_stop_scheduler" {
       start_schedule = "0 8 * * 1-5"
       stop_schedule  = "0 20 * * 1-5"
       project        = "resource-project-id"
+      resource_types = ["gce"]
     }
   ]
 

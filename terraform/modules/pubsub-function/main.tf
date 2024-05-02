@@ -38,18 +38,6 @@ resource "google_cloudfunctions2_function" "default" {
     environment_variables          = var.environment_variables
   }
 
-  # event_trigger {
-  #   event_type            = "google.cloud.pubsub.topic.v1.messagePublished"
-  #   trigger_region        = var.location
-  #   pubsub_topic          = var.pubsub_topic
-  #   service_account_email = var.trigger_service_account_email
-  #   retry_policy          = "RETRY_POLICY_DO_NOT_RETRY"
-  #   event_filters {
-  #     attribute = var.pubsub_filter.attribute
-  #     value     = var.pubsub_filter.value
-  #   }
-  # }
-
   labels = var.function_labels
 
   lifecycle {
