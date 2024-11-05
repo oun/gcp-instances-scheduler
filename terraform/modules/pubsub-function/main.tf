@@ -25,6 +25,7 @@ resource "google_cloudfunctions2_function" "default" {
         object = google_storage_bucket_object.default.name
       }
     }
+    service_account = var.build_service_account_email
   }
 
   service_config {
