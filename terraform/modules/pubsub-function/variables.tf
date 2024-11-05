@@ -45,6 +45,12 @@ variable "pubsub_topic" {
   description = "The name of a Pub/Sub topic."
 }
 
+variable "build_service_account" {
+  type        = string
+  description = "The fully-qualified name of the service account to be used for building container."
+  default     = null
+}
+
 variable "service_account_email" {
   type        = string
   description = "The existing service account to run cloud function."

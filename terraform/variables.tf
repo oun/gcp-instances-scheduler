@@ -114,6 +114,30 @@ variable "function_labels" {
   description = "A set of key/value label pairs to assign to the function."
 }
 
+variable "create_cloud_build_service_account" {
+  type        = bool
+  description = "If the custom cloud build service account should be created."
+  default     = true
+}
+
+variable "cloud_build_service_account_id" {
+  type        = string
+  description = "The name of the service account that will be created if create_cloud_build_service_account is true."
+  default     = "sa-gcf"
+}
+
+variable "cloud_build_service_account" {
+  type        = string
+  default     = null
+  description = "The fully-qualified name of the custom cloud build service account."
+}
+
+variable "cloud_build_service_account_iam_roles" {
+  type        = list(string)
+  description = "IAM roles for custom cloud build service account"
+  default     = ["roles/logging.logWriter", "roles/artifactregistry.writer", "roles/storage.objectViewer"]
+}
+
 variable "create_trigger_service_account" {
   type        = bool
   description = "If the service account to trigger function should be created."

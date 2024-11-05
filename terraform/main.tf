@@ -3,6 +3,7 @@ locals {
   pubsub_messages    = [for index, schedule in var.schedules : jsonencode({ project = local.scheduled_projects[index], labels = schedule.resource_labels })]
   pubsub_attributes  = [for index, schedule in var.schedules : { for type in schedule.resource_types : type => "true" }]
 
+  cloud_build_sa        = var.create_cloud_build_service_account ? google_service_account.gcf_sa[0].id : var.cloud_build_service_account
   trigger_sa_email      = var.create_trigger_service_account ? google_service_account.trigger_sa[0].email : var.trigger_service_account_email
   gce_function_sa_email = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? google_service_account.gce_function_sa[0].email : var.gce_function_config.service_account_email
   sql_function_sa_email = var.sql_function_config.enabled && var.sql_function_config.create_service_account ? google_service_account.sql_function_sa[0].email : var.sql_function_config.service_account_email
@@ -68,6 +69,14 @@ resource "google_storage_bucket" "default" {
   project                     = var.project_id
   location                    = var.region
   uniform_bucket_level_access = true
+}
+
+resource "google_service_account" "gcf_sa" {
+  count = var.create_cloud_build_service_account ? 1 : 0
+
+  account_id   = var.cloud_build_service_account_id
+  display_name = "Service Account for building cloud run function"
+  project      = var.project_id
 }
 
 resource "google_service_account" "trigger_sa" {
@@ -162,6 +171,14 @@ resource "google_cloud_run_service_iam_member" "stop_gke_function" {
   member   = "serviceAccount:${local.trigger_sa_email}"
 }
 
+resource "google_project_iam_member" "gcf_sa" {
+  for_each = var.create_cloud_build_service_account ? toset(var.cloud_build_service_account_iam_roles) : []
+
+  project = var.project_id
+  role    = each.value
+  member  = google_service_account.gcf_sa[0].member
+}
+
 resource "google_project_iam_member" "gce_function" {
   for_each = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? toset(local.scheduled_projects) : []
 
@@ -198,6 +215,7 @@ module "function_start_gce_instances" {
   entry_point                   = "startInstances"
   pubsub_topic                  = google_pubsub_topic.start_topic.id
   service_account_email         = local.gce_function_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.gce_function_config.timeout
   available_memory              = var.gce_function_config.available_memory
   max_instance_count            = var.gce_function_config.max_instance_count
@@ -218,6 +236,7 @@ module "function_stop_gce_instances" {
   entry_point                   = "stopInstances"
   pubsub_topic                  = google_pubsub_topic.stop_topic.id
   service_account_email         = local.gce_function_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.gce_function_config.timeout
   available_memory              = var.gce_function_config.available_memory
   max_instance_count            = var.gce_function_config.max_instance_count
@@ -238,6 +257,7 @@ module "function_start_sql_instances" {
   entry_point                   = "startInstances"
   pubsub_topic                  = google_pubsub_topic.start_topic.id
   service_account_email         = local.sql_function_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.sql_function_config.timeout
   available_memory              = var.sql_function_config.available_memory
   max_instance_count            = var.sql_function_config.max_instance_count
@@ -258,6 +278,7 @@ module "function_stop_sql_instances" {
   entry_point                   = "stopInstances"
   pubsub_topic                  = google_pubsub_topic.stop_topic.id
   service_account_email         = local.sql_function_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.sql_function_config.timeout
   available_memory              = var.sql_function_config.available_memory
   max_instance_count            = var.sql_function_config.max_instance_count
@@ -278,6 +299,7 @@ module "function_start_gke_node_pools" {
   entry_point           = "startInstances"
   pubsub_topic          = google_pubsub_topic.start_topic.id
   service_account_email = local.gke_function_sa_email
+  build_service_account = local.cloud_build_sa
   timeout               = var.gke_function_config.timeout
   available_memory      = var.gke_function_config.available_memory
   max_instance_count    = var.gke_function_config.max_instance_count
@@ -302,6 +324,7 @@ module "function_stop_gke_node_pools" {
   entry_point           = "stopInstances"
   pubsub_topic          = google_pubsub_topic.stop_topic.id
   service_account_email = local.gke_function_sa_email
+  build_service_account = local.cloud_build_sa
   timeout               = var.gke_function_config.timeout
   available_memory      = var.gke_function_config.available_memory
   max_instance_count    = var.gke_function_config.max_instance_count
