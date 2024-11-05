@@ -45,9 +45,9 @@ variable "pubsub_topic" {
   description = "The name of a Pub/Sub topic."
 }
 
-variable "build_service_account_email" {
+variable "build_service_account" {
   type        = string
-  description = "The service account to be used for building container."
+  description = "The fully-qualified name of the service account to be used for building container."
   default     = null
 }
 

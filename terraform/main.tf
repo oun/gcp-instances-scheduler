@@ -3,7 +3,7 @@ locals {
   pubsub_messages    = [for index, schedule in var.schedules : jsonencode({ project = local.scheduled_projects[index], labels = schedule.resource_labels })]
   pubsub_attributes  = [for index, schedule in var.schedules : { for type in schedule.resource_types : type => "true" }]
 
-  cloud_build_sa_email  = var.create_cloud_build_service_account ? google_service_account.gcf_sa[0].email : var.cloud_build_service_account_email
+  cloud_build_sa        = var.create_cloud_build_service_account ? google_service_account.gcf_sa[0].id : var.cloud_build_service_account
   trigger_sa_email      = var.create_trigger_service_account ? google_service_account.trigger_sa[0].email : var.trigger_service_account_email
   gce_function_sa_email = var.gce_function_config.enabled && var.gce_function_config.create_service_account ? google_service_account.gce_function_sa[0].email : var.gce_function_config.service_account_email
   sql_function_sa_email = var.sql_function_config.enabled && var.sql_function_config.create_service_account ? google_service_account.sql_function_sa[0].email : var.sql_function_config.service_account_email
@@ -215,7 +215,7 @@ module "function_start_gce_instances" {
   entry_point                   = "startInstances"
   pubsub_topic                  = google_pubsub_topic.start_topic.id
   service_account_email         = local.gce_function_sa_email
-  build_service_account_email   = local.cloud_build_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.gce_function_config.timeout
   available_memory              = var.gce_function_config.available_memory
   max_instance_count            = var.gce_function_config.max_instance_count
@@ -236,7 +236,7 @@ module "function_stop_gce_instances" {
   entry_point                   = "stopInstances"
   pubsub_topic                  = google_pubsub_topic.stop_topic.id
   service_account_email         = local.gce_function_sa_email
-  build_service_account_email   = local.cloud_build_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.gce_function_config.timeout
   available_memory              = var.gce_function_config.available_memory
   max_instance_count            = var.gce_function_config.max_instance_count
@@ -257,7 +257,7 @@ module "function_start_sql_instances" {
   entry_point                   = "startInstances"
   pubsub_topic                  = google_pubsub_topic.start_topic.id
   service_account_email         = local.sql_function_sa_email
-  build_service_account_email   = local.cloud_build_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.sql_function_config.timeout
   available_memory              = var.sql_function_config.available_memory
   max_instance_count            = var.sql_function_config.max_instance_count
@@ -278,7 +278,7 @@ module "function_stop_sql_instances" {
   entry_point                   = "stopInstances"
   pubsub_topic                  = google_pubsub_topic.stop_topic.id
   service_account_email         = local.sql_function_sa_email
-  build_service_account_email   = local.cloud_build_sa_email
+  build_service_account         = local.cloud_build_sa
   timeout                       = var.sql_function_config.timeout
   available_memory              = var.sql_function_config.available_memory
   max_instance_count            = var.sql_function_config.max_instance_count
@@ -288,21 +288,21 @@ module "function_stop_sql_instances" {
 }
 
 module "function_start_gke_node_pools" {
-  count                       = var.gke_function_config.enabled ? 1 : 0
-  source                      = "./modules/pubsub-function"
-  name                        = "start-gke-node-pools"
-  project_id                  = var.project_id
-  description                 = "Function for starting GKE node pools"
-  bucket_name                 = google_storage_bucket.default.name
-  source_dir                  = "${path.module}/../functions/gke"
-  location                    = var.region
-  entry_point                 = "startInstances"
-  pubsub_topic                = google_pubsub_topic.start_topic.id
-  service_account_email       = local.gke_function_sa_email
-  build_service_account_email = local.cloud_build_sa_email
-  timeout                     = var.gke_function_config.timeout
-  available_memory            = var.gke_function_config.available_memory
-  max_instance_count          = var.gke_function_config.max_instance_count
+  count                 = var.gke_function_config.enabled ? 1 : 0
+  source                = "./modules/pubsub-function"
+  name                  = "start-gke-node-pools"
+  project_id            = var.project_id
+  description           = "Function for starting GKE node pools"
+  bucket_name           = google_storage_bucket.default.name
+  source_dir            = "${path.module}/../functions/gke"
+  location              = var.region
+  entry_point           = "startInstances"
+  pubsub_topic          = google_pubsub_topic.start_topic.id
+  service_account_email = local.gke_function_sa_email
+  build_service_account = local.cloud_build_sa
+  timeout               = var.gke_function_config.timeout
+  available_memory      = var.gke_function_config.available_memory
+  max_instance_count    = var.gke_function_config.max_instance_count
   environment_variables = {
     SHUTDOWN_TAINT_KEY   = var.gke_function_config.shutdown_taint_key
     SHUTDOWN_TAINT_VALUE = var.gke_function_config.shutdown_taint_value
@@ -313,21 +313,21 @@ module "function_start_gke_node_pools" {
 }
 
 module "function_stop_gke_node_pools" {
-  count                       = var.gke_function_config.enabled ? 1 : 0
-  source                      = "./modules/pubsub-function"
-  name                        = "stop-gke-node-pools"
-  project_id                  = var.project_id
-  description                 = "Function for stopping GKE node pools"
-  bucket_name                 = google_storage_bucket.default.name
-  source_dir                  = "${path.module}/../functions/gke"
-  location                    = var.region
-  entry_point                 = "stopInstances"
-  pubsub_topic                = google_pubsub_topic.stop_topic.id
-  service_account_email       = local.gke_function_sa_email
-  build_service_account_email = local.cloud_build_sa_email
-  timeout                     = var.gke_function_config.timeout
-  available_memory            = var.gke_function_config.available_memory
-  max_instance_count          = var.gke_function_config.max_instance_count
+  count                 = var.gke_function_config.enabled ? 1 : 0
+  source                = "./modules/pubsub-function"
+  name                  = "stop-gke-node-pools"
+  project_id            = var.project_id
+  description           = "Function for stopping GKE node pools"
+  bucket_name           = google_storage_bucket.default.name
+  source_dir            = "${path.module}/../functions/gke"
+  location              = var.region
+  entry_point           = "stopInstances"
+  pubsub_topic          = google_pubsub_topic.stop_topic.id
+  service_account_email = local.gke_function_sa_email
+  build_service_account = local.cloud_build_sa
+  timeout               = var.gke_function_config.timeout
+  available_memory      = var.gke_function_config.available_memory
+  max_instance_count    = var.gke_function_config.max_instance_count
   environment_variables = {
     SHUTDOWN_TAINT_KEY   = var.gke_function_config.shutdown_taint_key
     SHUTDOWN_TAINT_VALUE = var.gke_function_config.shutdown_taint_value

@@ -48,7 +48,7 @@ Then perform the following commands:
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_cloud_build_service_account_email"></a> [cloud\_build\_service\_account\_email](#input\_cloud\_build\_service\_account\_email) | The existing custom cloud build service account email. | `string` | `null` | no |
+| <a name="input_cloud_build_service_account"></a> [cloud\_build\_service\_account](#input\_cloud\_build\_service\_account) | The fully-qualified name of the custom cloud build service account. | `string` | `null` | no |
 | <a name="input_cloud_build_service_account_iam_roles"></a> [cloud\_build\_service\_account\_iam\_roles](#input\_cloud\_build\_service\_account\_iam\_roles) | IAM roles for custom cloud build service account | `list(string)` | <pre>[<br>  "roles/logging.logWriter",<br>  "roles/artifactregistry.writer",<br>  "roles/storage.objectViewer"<br>]</pre> | no |
 | <a name="input_cloud_build_service_account_id"></a> [cloud\_build\_service\_account\_id](#input\_cloud\_build\_service\_account\_id) | The name of the service account that will be created if create\_cloud\_build\_service\_account is true. | `string` | `"sa-gcf"` | no |
 | <a name="input_create_cloud_build_service_account"></a> [create\_cloud\_build\_service\_account](#input\_create\_cloud\_build\_service\_account) | If the custom cloud build service account should be created. | `bool` | `true` | no |

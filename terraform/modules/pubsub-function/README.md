@@ -7,7 +7,7 @@
 |------|-------------|------|---------|:--------:|
 | <a name="input_available_memory"></a> [available\_memory](#input\_available\_memory) | The amount of memory allotted for the function to use. | `string` | `"256M"` | no |
 | <a name="input_bucket_name"></a> [bucket\_name](#input\_bucket\_name) | The bucket to store function source code. | `string` | `""` | no |
-| <a name="input_build_service_account_email"></a> [build\_service\_account\_email](#input\_build\_service\_account\_email) | The service account to be used for building container. | `string` | `null` | no |
+| <a name="input_build_service_account"></a> [build\_service\_account](#input\_build\_service\_account) | The fully-qualified name of the service account to be used for building container. | `string` | `null` | no |
 | <a name="input_description"></a> [description](#input\_description) | The description of the cloud function. | `string` | `"Processes events."` | no |
 | <a name="input_entry_point"></a> [entry\_point](#input\_entry\_point) | The name of a method in the function source which will be invoked when the function is executed. | `string` | n/a | yes |
 | <a name="input_environment_variables"></a> [environment\_variables](#input\_environment\_variables) | A set of key/value environment variable pairs to assign to the function. | `map(string)` | `{}` | no |

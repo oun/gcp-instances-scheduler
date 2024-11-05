@@ -126,10 +126,10 @@ variable "cloud_build_service_account_id" {
   default     = "sa-gcf"
 }
 
-variable "cloud_build_service_account_email" {
+variable "cloud_build_service_account" {
   type        = string
   default     = null
-  description = "The existing custom cloud build service account email."
+  description = "The fully-qualified name of the custom cloud build service account."
 }
 
 variable "cloud_build_service_account_iam_roles" {
